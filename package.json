@@ -1,0 +1,31 @@
+{
+  "name": "fifa-api",
+  "version": "1.0.0",
+  "description": "Fifa custom Team builder API based on express js with es6 and integrated with mongodb",
+  "main": "dist/app.js",
+  "scripts": {
+    "build": "babel ./src --out-dir ./build",
+    "start": "nodemon --exec babel-node src/app.js",
+    "lint": "eslint ."
+  },
+  "author": "Saurav M. H",
+  "url": "https://github.com/sauravhiremath/fifa-api",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.9"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/node": "^7.8.7",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/runtime": "^7.9.2",
+    "dateformat": "^3.0.3",
+    "nodemon": "^2.0.3",
+    "winston": "^2.4.3"
+  }
+}
