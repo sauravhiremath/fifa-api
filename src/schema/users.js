@@ -1,24 +1,20 @@
 import mongoose from 'mongoose';
 
-const usersSchema = new mongoose.Schema(
-    {
-        first_name: {
-            type: String,
-        },
-        last_name: {
-            type: String,
-        },
-        password: {
-            type: String,
-            required: true
-        },
-        email: {
-            type: String,
-            index: true,
-            unique: true,
-            required: true
-        },
+const usersSchema = new mongoose.Schema({
+    username: {
+        type: String
+    },
+    protected: {
+        type: Boolean,
+        default: false
+    },
+    password: {
+        type: String
+    },
+    teams: {
+        type: Array,
+        default: []
     }
-);
+});
 
 export default usersSchema;

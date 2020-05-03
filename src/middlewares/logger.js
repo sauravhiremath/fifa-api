@@ -40,11 +40,7 @@ export default new Logger({
                         break;
                 }
 
-                let output = [
-                    '[' + options.timestamp() + '][' + level + ']',
-                    message,
-                    meta,
-                ];
+                let output = ['[' + options.timestamp() + '][' + level + ']', message, meta];
 
                 return output.join(' ');
             },

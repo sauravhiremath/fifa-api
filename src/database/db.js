@@ -6,23 +6,22 @@ mongoose.connect(env.DB_URL, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true
-    }
-);
+});
 
 const db = mongoose.connection;
 
 // When successfully connected
-db.on('connected', function () {
-    logger.info('Mongoose default connection open to ' + env.DB_URL);
+db.on('connected', () => {
+    logger.info(`Mongoose default connection open to ${env.DB_URL}`);
 });
 
 // If the connection throws an error
-db.on('error', function (err) {
-    logger.info('Mongoose default connection error: ' + err);
+db.on('error', err => {
+    logger.info(`Mongoose default connection error: ${err}`);
 });
 
 // When the connection is disconnected
-db.on('disconnected', function () {
+db.on('disconnected', () => {
     logger.info('Mongoose default connection disconnected');
 });
 
