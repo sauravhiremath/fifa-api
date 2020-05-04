@@ -5,10 +5,10 @@ import { cyan, yellow, red } from 'chalk';
 export default new Logger({
     transports: [
         new _transports.Console({
-            timestamp: function () {
+            timestamp() {
                 return dateformat(Date.now(), 'yyyy-mm-dd HH:MM:ss.l');
             },
-            formatter: function (options) {
+            formatter(options) {
                 let message = '';
 
                 if (options.message !== undefined) {
@@ -40,10 +40,10 @@ export default new Logger({
                         break;
                 }
 
-                let output = ['[' + options.timestamp() + '][' + level + ']', message, meta];
+                const output = ['[' + options.timestamp() + '][' + level + ']', message, meta];
 
                 return output.join(' ');
-            },
-        }),
-    ],
+            }
+        })
+    ]
 });

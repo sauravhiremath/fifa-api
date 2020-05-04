@@ -1,16 +1,15 @@
-import express from 'express';
 import './database/db';
-import env from './env';
-import routes from './routes';
-import bodyParser from 'body-parser';
+import express from 'express';
 import http from 'http';
-import socker from './socker';
-import authenticated from './middlewares/authenticated';
-import logger from './middlewares/logger';
+import bodyParser from 'body-parser';
+import routes from './routes';
+import { socker } from './socker';
+import { handleError, authenticated, logger } from './middlewares';
+import { corsOptions, API_PORT } from './env';
 
-export const app = express();
-export const server = new http.Server(app);
-socker(server, env.corsOptions);
+const app = express();
+const server = new http.Server(app);
+socker(server, corsOptions);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -18,10 +17,14 @@ app.use('/users', authenticated);
 
 routes(app);
 
-app.listen(env.API_PORT, () => {
-    logger.info(`Api listening on port ${env.API_PORT}!`);
+app.use((err, req, res) => {
+    return handleError(err, res);
 });
 
-app.listen(env.API_PORT + 1, () => {
-    logger.info(`Socker listening on port ${env.API_PORT + 1}!`);
+app.listen(API_PORT, () => {
+    logger.info(`Api listening on port ${API_PORT}!`);
+});
+
+app.listen(API_PORT + 1, () => {
+    logger.info(`Socker listening on port ${API_PORT + 1}!`);
 });

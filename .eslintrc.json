@@ -22,7 +22,7 @@
     "rules": {
       "prettier/prettier": "error",
       "object-curly-spacing": ["warn", "always"],
-      "indent": ["error", 4],
+      "indent": ["error", 4, { "SwitchCase": 1 }],
       "max-len": [
         "warn",
         {
