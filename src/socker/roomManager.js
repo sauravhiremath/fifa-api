@@ -20,19 +20,51 @@ export default class Room {
         }
     }
 
-    currentPlayers() {
-        // Broadcast info about all players joined to given room
+    showPlayers() {
+        // Broadcast info about { all players and their ready status } joined to given room
+        // Deafult status as 'Not ready'
+    }
+
+    isReady() {
+        // Mark player as ready  ---> to start the draft in the given room
+    }
+
+    beginDraft() {
+        // Uses shufflePlayers() --> Selects first player from list --> call startTimer()
+    }
+
+    endDraft() {
+        // End Current turn
+    }
+
+    /**
+     * Description. Shuffle the players ready in a given room in random order
+     * @listens              event:beginDraft(),nextTurn()
+     * @param     {string}   roomId - as specified by /^#([A-Z0-9]){6}$/
+     */
+    shufflePlayers() {
+        // Shuffle the order of players and return a new order
     }
 
     /**
      * Description. Create new Room with given roomId
-     * @access         private
-     * @listens event:init()
-     * @param {string} roomId - as specified by /^#([A-Z0-9]){6}$/
+     * @listens              event:beginDraft(),nextTurn()
+     * @param     {string}   roomId - as specified by /^#([A-Z0-9]){6}$/
      */
-    _createRoom(roomId) {
-        if (isValid(roomId)) {
-            logger.info(`Room created with roomId: ${roomId}`);
+    shiftTurn() {
+        // Begin timer for the next pick [ 30 secs each pic ]
+        // Run after shufflePlayers and for consecutive turns
+    }
+
+    /**
+     * Description. Create new Room with given roomId
+     * @access               private
+     * @listens              event:init()
+     * @param     {string}   roomId - as specified by /^#([A-Z0-9]){6}$/
+     */
+    createRoom() {
+        if (isValid(this.roomId)) {
+            logger.info(`Room created with roomId: ${this.roomId}`);
         }
     }
 }
