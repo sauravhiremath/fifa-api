@@ -8,8 +8,8 @@ export default app => {
 
     const classicMode = io.of('/classic-mode');
     classicMode.on('connection', socket => {
-        const { roomId } = socket.handshake.query;
-        const room = new Room({ socket, roomId });
+        const { roomId, action } = socket.handshake.query;
+        const room = new Room({ socket, roomId, action });
 
         // Checks if room available
         // if yes, then joins the room
