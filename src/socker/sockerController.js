@@ -4,20 +4,20 @@ import { logger } from '../middlewares';
 import Room from './roomManager';
 
 export default app => {
-    const io = socketio.listen(app);
+    const io = socketio.listen(app, {
+        path: '/classic-mode',
+        origins: ['http://localhost:3000']
+    });
+
+    logger.info('Started listening!');
 
     const classicMode = io.of('/classic-mode');
-    classicMode.on('connection', socket => {
+    classicMode.on('connection', async socket => {
         const { roomId, action } = socket.handshake.query;
-        const room = new Room({ socket, roomId, action });
+        const room = new Room({ io: classicMode, socket, roomId, action });
 
-        // Checks if room available
-        // if yes, then joins the room
-        // if no, then creates new room
-        room.init();
+        await room.init();
         logger.info('Client Connected');
-
-        socket.join(room);
 
         socket.on('disconnect', () => {
             logger.info('Client Disconnected!');
