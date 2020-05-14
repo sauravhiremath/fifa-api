@@ -1,8 +1,9 @@
 import { Logger, transports as _transports } from 'winston';
 import dateformat from 'dateformat';
-import { cyan, yellow, red } from 'chalk';
+import { grey, cyan, yellow, red } from 'chalk';
 
 export default new Logger({
+    level: 'silly',
     transports: [
         new _transports.Console({
             timestamp() {
@@ -24,16 +25,24 @@ export default new Logger({
                 let level = options.level.toUpperCase();
 
                 switch (level) {
+                    case 'DEBUG':
+                        level = grey(level);
+                        message = grey(message)
+                        break;
+
                     case 'INFO':
                         level = cyan(level);
+                        message = cyan(message);
                         break;
 
                     case 'WARN':
                         level = yellow(level);
+                        message = yellow(message);
                         break;
 
                     case 'ERROR':
                         level = red(level);
+                        message = red(message);
                         break;
 
                     default:

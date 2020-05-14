@@ -1,35 +1,60 @@
-import usersModel from './../models/usersModel';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import env from '../env';
+
+import { APP_KEY, SALT_ROUNDS } from '../env';
+import Users, { checkExisting } from './../models/usersModel';
+import { ErrorHandler } from '../middlewares';
 
 const authController = {
-    login: (req, res, next) => {
-        const credential = req.body;
-        usersModel.findOne({ email: credential.email, password: credential.password }, (err, user) => {
-            if (err) res.json(err);
-            if (user !== null) {
-                const token = jwt.sign(
-                    {
-                        email: user.email,
-                        first_name: user.first_name,
-                        last_name: user.last_name,
-                    },
-                    env.App_key
+    login: async (req, res) => {
+        const { username, password, reserved } = req.body;
+
+        if (!reserved && username) {
+            const check = await checkExisting(username);
+            if (check) {
+                throw new ErrorHandler(
+                    401,
+                    'Username is already in use. Try another username or provide valid password!'
                 );
-                res.json({ token });
-            } else {
-                res.json('email or password incorrect!');
             }
-        });
+
+            const token = jwt.sign({ username: user.username, reserved: false }, APP_KEY);
+            return res.json({ success: true, token });
+        }
+
+        const match = await bcrypt.compare(password, user.password);
+        const user = await Users.findOne({ username });
+
+        if (user && match) {
+            const token = jwt.sign({ username: user.username }, APP_KEY);
+            return res.json({ success: true, token });
+        }
+
+        throw new ErrorHandler(401, 'Username or password is incorrect. Try again!');
     },
 
-    register: (req, res, next) => {
-        let user = new usersModel(req.body);
-        user.save(req.body, function (err, user) {
-            if (err) return res.json(err);
-            res.json(user);
+    register: async (req, res) => {
+        if (!req.body) {
+            throw new ErrorHandler(401, 'Invalid Request');
+        }
+
+        const { username, password } = req.body;
+        const check = await checkExisting(username);
+
+        if (check) {
+            throw new ErrorHandler(401, 'Username already exists. Try another one!');
+        }
+
+        const hash = bcrypt.hashSync(password, SALT_ROUNDS);
+        const newUser = new Users({ username, password: hash });
+
+        await newUser.save();
+
+        return res.json({
+            success: true,
+            message: 'Successfully registered'
         });
-    },
+    }
 };
 
 export default authController;

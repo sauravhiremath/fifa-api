@@ -6,9 +6,9 @@ const routes = route => {
         res.send(`Api server in running (${new Date()})`);
     });
 
-    route.route('/login').post(authController.login);
+    route.route('/auth/login').post(authController.login);
 
-    route.route('/register').post(authController.register);
+    route.route('/auth/register').post(authController.register);
 
     route.route('/users').get(usersController.getAll).post(usersController.create);
 

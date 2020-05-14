@@ -7,6 +7,7 @@ if (process.env.NODE_ENV === 'production') {
 
 export const API_PORT = 3003;
 export const API_KEY = 'example-secret-here';
+export const SALT_ROUNDS = 10;
 export const DB_URL = 'mongodb://localhost:27017/fifa';
 export const ROOM_ID_RX = /^#([A-Z0-9]){6}$/;
 

@@ -18,16 +18,10 @@ export default class Room {
     async init() {
         // Stores an array containing socket ids in 'roomId'
         let clients;
-
         await this.io.in(this.roomId).clients((e, fclients) => {
-            if (e) {
-                throw e;
-            }
-
-            clients = fclients;
-            logger.info(clients);
+            clients = fclients || logger.error('[ERR] Room creation failed!');
+            logger.debug(clients);
         });
-        logger.info(clients);
 
         if (this.action === 'join') {
             // Check if room size is equal to or more than 1
