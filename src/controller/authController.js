@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import { APP_KEY, SALT_ROUNDS } from '../env';
+import { API_KEY, SALT_ROUNDS } from '../env';
 import Users, { checkExisting } from './../models/usersModel';
 import { ErrorHandler } from '../middlewares';
 
@@ -18,7 +18,7 @@ const authController = {
                 );
             }
 
-            const token = jwt.sign({ username: user.username, reserved: false }, APP_KEY);
+            const token = jwt.sign({ username, reserved: false }, API_KEY);
             return res.json({ success: true, token });
         }
 
@@ -26,7 +26,7 @@ const authController = {
         const user = await Users.findOne({ username });
 
         if (user && match) {
-            const token = jwt.sign({ username: user.username }, APP_KEY);
+            const token = jwt.sign({ username: user.username }, API_KEY);
             return res.json({ success: true, token });
         }
 
