@@ -4,7 +4,7 @@ import { isValid } from '../schema/rooms';
 export default class Room {
     constructor(options) {
         this.io = options.io;
-        this.socket = options.socket;
+        this.socker = options.socket;
         this.roomId = options.roomId;
         this.action = options.action; // [join, create]
     }
@@ -18,9 +18,9 @@ export default class Room {
     async init() {
         // Stores an array containing socket ids in 'roomId'
         let clients;
-        await this.io.in(this.roomId).clients((e, fclients) => {
-            clients = fclients || logger.error('[ERR] Room creation failed!');
-            logger.debug(clients);
+        await this.io.in(this.roomId).clients((e, _clients) => {
+            clients = _clients || logger.error('[ERR] Room creation failed!');
+            logger.debug(`Connected Clients are: ${clients}`);
         });
 
         if (this.action === 'join') {
@@ -29,10 +29,10 @@ export default class Room {
             // If not, emit 'invalid operation: room does not exist'
 
             if (clients.length >= 1) {
-                await this.socket.join(this.roomId);
+                await this.socker.join(this.roomId);
+                this.socker.emit('[SUCCESS] Successfully initialised');
                 logger.info(`[JOIN] Client joined room ${this.roomId}`);
             } else {
-                this.socket.emit('Error: Create a room first!');
                 logger.warn(`[JOIN FAILED] Client denied join, as roomId ${this.roomId} not created`);
             }
         } else if (this.action === 'create') {
@@ -41,10 +41,10 @@ export default class Room {
             // If not, emit 'invalid operation: room already exists'
 
             if (clients.length < 1) {
-                await this.socket.join(this.roomId);
+                await this.socker.join(this.roomId);
+                this.socker.emit('[SUCCESS] Successfully initialised');
                 logger.info(`[CREATE] Client created and joined room ${this.roomId}`);
             } else {
-                this.socket.emit('Error: Room already created. Join the room!');
                 logger.warn(`[CREATE FAILED] Client denied create, as roomId ${this.roomId} already present`);
             }
         }
