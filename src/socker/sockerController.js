@@ -13,8 +13,8 @@ export default app => {
 
     const classicMode = io.of('/classic-mode');
     classicMode.on('connection', async socket => {
-        const { roomId, action } = socket.handshake.query;
-        const room = new Room({ io: classicMode, socket, roomId, action });
+        const { roomId, password, action } = socket.handshake.query;
+        const room = new Room({ io: classicMode, socket, roomId, password, action });
 
         await room.init();
         logger.info('Client Connected');

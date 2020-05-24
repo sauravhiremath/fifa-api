@@ -1,16 +1,24 @@
+import bcrypt from 'bcrypt';
+
 import logger from '../middlewares/logger';
 import { isValid } from '../schema/rooms';
+import { SALT_ROUNDS } from '../env';
 
 export default class Room {
     constructor(options) {
         this.io = options.io;
         this.socker = options.socket;
         this.roomId = options.roomId;
+        this.password = options.password; // Optional
         this.action = options.action; // [join, create]
+        this.store = options.io.sockets.adapter;
+
+        logger.debug(JSON.stringify(this.store));
     }
 
     /**
      * Summary.     Initialises steps on first connection
+     *
      * Description. Checks if room available
      *              If yes, then joins the room.
      *              If no, then creates new room
@@ -24,29 +32,44 @@ export default class Room {
         });
 
         if (this.action === 'join') {
+            // Check if correct password for room, if required
             // Check if room size is equal to or more than 1
             // If yes, join the socket to the room
             // If not, emit 'invalid operation: room does not exist'
 
             if (clients.length >= 1) {
+                if (!(await bcrypt.compare(this.password, this.io.adapter.rooms[this.roomId].password))) {
+                    logger.info(`[JOIN FAILED] Incorrect password for room ${this.roomId}`);
+                    return this.socker.emit('Error: Incorrect password!');
+                }
+
                 await this.socker.join(this.roomId);
                 this.socker.emit('[SUCCESS] Successfully initialised');
                 logger.info(`[JOIN] Client joined room ${this.roomId}`);
-            } else {
-                logger.warn(`[JOIN FAILED] Client denied join, as roomId ${this.roomId} not created`);
+                return;
             }
-        } else if (this.action === 'create') {
+
+            logger.warn(`[JOIN FAILED] Client denied join, as roomId ${this.roomId} not created`);
+            return this.socker.emit('Error: Create a room first!');
+        }
+
+        if (this.action === 'create') {
             // Check if room size is equal to zero
             // If yes, create new room and join socket to the room
             // If not, emit 'invalid operation: room already exists'
 
             if (clients.length < 1) {
                 await this.socker.join(this.roomId);
-                this.socker.emit('[SUCCESS] Successfully initialised');
+                if (this.password) {
+                    this.io.adapter.rooms[this.roomId].password = await bcrypt.hash(this.password, SALT_ROUNDS);
+                }
+
                 logger.info(`[CREATE] Client created and joined room ${this.roomId}`);
-            } else {
-                logger.warn(`[CREATE FAILED] Client denied create, as roomId ${this.roomId} already present`);
+                return this.socker.emit('[SUCCESS] Successfully initialised');
             }
+
+            logger.warn(`[CREATE FAILED] Client denied create, as roomId ${this.roomId} already present`);
+            return this.socker.emit('Error: Room already created. Join the room!');
         }
     }
 
