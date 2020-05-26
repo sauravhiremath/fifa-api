@@ -6,12 +6,12 @@ import { SALT_ROUNDS } from '../env';
 
 export default class Room {
     constructor(options) {
-        this.io = options.io;
+        this.io = options.io; // Short for io.of('/your_namespace_here')
         this.socker = options.socket;
         this.roomId = options.roomId;
         this.password = options.password; // Optional
         this.action = options.action; // [join, create]
-        this.store = options.io.sockets.adapter;
+        this.store = options.io.adapter.rooms[options.roomId];
 
         logger.debug(JSON.stringify(this.store));
     }
@@ -38,7 +38,7 @@ export default class Room {
             // If not, emit 'invalid operation: room does not exist'
 
             if (clients.length >= 1) {
-                if (!(await bcrypt.compare(this.password, this.io.adapter.rooms[this.roomId].password))) {
+                if (!(await bcrypt.compare(this.password, this.store.password))) {
                     logger.info(`[JOIN FAILED] Incorrect password for room ${this.roomId}`);
                     return this.socker.emit('Error: Incorrect password!');
                 }
@@ -61,7 +61,7 @@ export default class Room {
             if (clients.length < 1) {
                 await this.socker.join(this.roomId);
                 if (this.password) {
-                    this.io.adapter.rooms[this.roomId].password = await bcrypt.hash(this.password, SALT_ROUNDS);
+                    this.store.password = await bcrypt.hash(this.password, SALT_ROUNDS);
                 }
 
                 logger.info(`[CREATE] Client created and joined room ${this.roomId}`);
