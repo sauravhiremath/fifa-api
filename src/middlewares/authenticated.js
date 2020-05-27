@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { API_KEY } from '../env';
+import { ErrorHandler, logger } from './';
 
 const authenticated = (req, res, next) => {
     const token = req.headers.authorization;
@@ -13,13 +14,13 @@ const authenticated = (req, res, next) => {
 };
 
 export const verifyToken = token => {
-    jwt.verify(token, API_KEY, (err, decoded) => {
-        if (err) {
-            return undefined;
-        }
-
+    try {
+        const decoded = jwt.verify(token, API_KEY);
         return decoded;
-    });
+    } catch (err) {
+        logger.debug(err);
+        throw new ErrorHandler(401, 'Invalid token or unauthorized operation. Sign in again!');
+    }
 };
 
 export default authenticated;

@@ -56,7 +56,7 @@ const authController = {
         });
     },
 
-    verify: async (req, res) => {
+    verify: (req, res) => {
         if (!req.body) {
             throw new ErrorHandler(401, 'Unauthorized user and/or route');
         }
