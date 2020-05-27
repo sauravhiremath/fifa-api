@@ -8,6 +8,8 @@ const routes = route => {
 
     route.route('/auth/login').post(authController.login);
 
+    route.route('/auth/verify').post(authController.verify);
+
     route.route('/auth/register').post(authController.register);
 
     route.route('/users').get(usersController.getAll).post(usersController.create);

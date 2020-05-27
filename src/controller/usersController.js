@@ -13,6 +13,10 @@ const usersController = {
 
     getOne: (req, res, next) => {
         usersModel.findById(req.params.id, (err, user) => {
+            if (err) {
+                return res.json(err);
+            }
+
             res.json(user || {});
         });
     },

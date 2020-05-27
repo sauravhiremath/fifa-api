@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 import { API_KEY, SALT_ROUNDS } from '../env';
 import Users, { checkExisting } from './../models/usersModel';
-import { ErrorHandler } from '../middlewares';
+import { ErrorHandler, verifyToken } from '../middlewares';
 
 const authController = {
     login: async (req, res) => {
@@ -35,14 +35,14 @@ const authController = {
 
     register: async (req, res) => {
         if (!req.body) {
-            throw new ErrorHandler(401, 'Invalid Request');
+            throw new ErrorHandler(400, 'Invalid Request');
         }
 
         const { username, password } = req.body;
         const check = await checkExisting(username);
 
         if (check) {
-            throw new ErrorHandler(401, 'Username already exists. Try another one!');
+            throw new ErrorHandler(400, 'Username already exists. Try another one!');
         }
 
         const hash = bcrypt.hashSync(password, SALT_ROUNDS);
@@ -54,6 +54,21 @@ const authController = {
             success: true,
             message: 'Successfully registered'
         });
+    },
+
+    verify: async (req, res) => {
+        if (!req.body) {
+            throw new ErrorHandler(401, 'Unauthorized user and/or route');
+        }
+
+        const { token } = req.body;
+        const decoded = verifyToken(token);
+
+        if (!decoded) {
+            throw new ErrorHandler(401, 'Unauthorized action. JWT expired');
+        }
+
+        return res.json({ success: true, decoded });
     }
 };
 
