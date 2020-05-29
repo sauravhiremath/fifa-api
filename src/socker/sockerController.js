@@ -19,6 +19,8 @@ export default app => {
         await room.init();
         logger.info('Client Connected');
 
+        room.showPlayers();
+
         socket.on('disconnect', () => {
             logger.info('Client Disconnected!');
         });

@@ -23,11 +23,11 @@ export default class Room {
      *              If yes, then joins the room.
      *              If no, then creates new room
      */
-    async init() {
+    async init(username) {
         // Stores an array containing socket ids in 'roomId'
         let clients;
         await this.io.in(this.roomId).clients((e, _clients) => {
-            clients = _clients || logger.error('[ERR] Room creation failed!');
+            clients = _clients || logger.error('[INTERNAL ERROR] Room creation failed!');
             logger.debug(`Connected Clients are: ${clients}`);
         });
 
@@ -44,6 +44,8 @@ export default class Room {
                 }
 
                 await this.socker.join(this.roomId);
+                this.store.clients.push({ username, readStatus: false });
+                this.socker.username = username;
                 this.socker.emit('[SUCCESS] Successfully initialised');
                 logger.info(`[JOIN] Client joined room ${this.roomId}`);
                 return;
@@ -64,6 +66,8 @@ export default class Room {
                     this.store.password = await bcrypt.hash(this.password, SALT_ROUNDS);
                 }
 
+                this.store.clients = [{ username, readStatus: false }];
+                this.socker.username = username;
                 logger.info(`[CREATE] Client created and joined room ${this.roomId}`);
                 return this.socker.emit('[SUCCESS] Successfully initialised');
             }
@@ -76,6 +80,8 @@ export default class Room {
     showPlayers() {
         // Broadcast info about { all players and their ready status } joined to given room
         // Deafult status as 'Not ready'
+        const { clients } = this.store;
+        this.socker.emit('joined-players', { joinedPlayers: clients });
     }
 
     isReady() {
