@@ -38,7 +38,7 @@ export default class Room {
             // If not, emit 'invalid operation: room does not exist'
 
             if (clients.length >= 1) {
-                if (!(await bcrypt.compare(this.password, this.store.password))) {
+                if (this.store.password && !(await bcrypt.compare(this.password, this.store.password))) {
                     logger.info(`[JOIN FAILED] Incorrect password for room ${this.roomId}`);
                     return this.socker.emit('Error: Incorrect password!');
                 }
