@@ -13,13 +13,15 @@ export default app => {
 
     const classicMode = io.of('/classic-mode');
     classicMode.on('connection', async socket => {
-        const { roomId, password, action } = socket.handshake.query;
-        const room = new Room({ io: classicMode, socket, roomId, password, action });
+        const { username, roomId, password, action } = socket.handshake.query;
+        const room = new Room({ io: classicMode, socket, username, roomId, password, action });
 
-        await room.init();
+        const joinedRoom = await room.init(username);
         logger.info('Client Connected');
 
-        room.showPlayers();
+        if (joinedRoom) {
+            room.showPlayers();
+        }
 
         socket.on('disconnect', () => {
             logger.info('Client Disconnected!');
