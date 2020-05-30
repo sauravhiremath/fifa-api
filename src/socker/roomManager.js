@@ -22,7 +22,7 @@ export default class Room {
      *                   If yes, then joins the room.
      *                   If no, then creates new room
      *
-     * @return   bool    Returns true if successfull, false otherwise
+     * @return   {bool}    Returns true if successfull, false otherwise
      */
     async init(username) {
         // Stores an array containing socket ids in 'roomId'
@@ -47,7 +47,7 @@ export default class Room {
                 }
 
                 await this.socker.join(this.roomId);
-                this.store.clients.push({ username, readyStatus: false });
+                this.store.clients.push({ id: this.socker.id, username, readyStatus: false });
                 this.socker.username = username;
                 this.socker.emit('[SUCCESS] Successfully initialised');
                 logger.info(`[JOIN] Client joined room ${this.roomId}`);
@@ -72,7 +72,7 @@ export default class Room {
                     this.store.password = await bcrypt.hash(this.password, SALT_ROUNDS);
                 }
 
-                this.store.clients = [{ username, readyStatus: false }];
+                this.store.clients = [{ id: this.socker.id, username, readyStatus: false }];
                 this.socker.username = username;
                 logger.info(`[CREATE] Client created and joined room ${this.roomId}`);
                 this.socker.emit('[SUCCESS] Successfully initialised');
@@ -94,6 +94,13 @@ export default class Room {
 
     isReady() {
         // Mark player as ready  ---> to start the draft in the given room
+        this.socker.on('is-ready', () => {
+            this.store.clients.forEach(player => {
+                if (player.id === this.socker.id) {
+                    player.readyStatus = true;
+                }
+            });
+        });
     }
 
     beginDraft() {
