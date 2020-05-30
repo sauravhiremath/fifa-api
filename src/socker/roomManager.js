@@ -12,7 +12,7 @@ export default class Room {
         this.roomId = options.roomId;
         this.password = options.password; // Optional
         this.action = options.action; // [join, create]
-        this.store = options.io.adapter;
+        this.store = options.io.adapter; // Later expanded to io.adapter.rooms[roomId]
     }
 
     /**
@@ -38,6 +38,7 @@ export default class Room {
             // If yes, join the socket to the room
             // If not, emit 'invalid operation: room does not exist'
 
+            this.store = this.store.rooms[this.roomId];
             if (clients.length >= 1) {
                 if (this.store.password && !(await bcrypt.compare(this.password, this.store.password))) {
                     logger.info(`[JOIN FAILED] Incorrect password for room ${this.roomId}`);
@@ -46,7 +47,7 @@ export default class Room {
                 }
 
                 await this.socker.join(this.roomId);
-                this.store.clients.push({ username, readStatus: false });
+                this.store.clients.push({ username, readyStatus: false });
                 this.socker.username = username;
                 this.socker.emit('[SUCCESS] Successfully initialised');
                 logger.info(`[JOIN] Client joined room ${this.roomId}`);
@@ -71,7 +72,7 @@ export default class Room {
                     this.store.password = await bcrypt.hash(this.password, SALT_ROUNDS);
                 }
 
-                this.store.clients = [{ username, readStatus: false }];
+                this.store.clients = [{ username, readyStatus: false }];
                 this.socker.username = username;
                 logger.info(`[CREATE] Client created and joined room ${this.roomId}`);
                 this.socker.emit('[SUCCESS] Successfully initialised');
@@ -88,7 +89,7 @@ export default class Room {
         // Broadcast info about { all players and their ready status } joined to given room
         // Deafult status as 'Not ready'
         const { clients } = this.store;
-        this.socker.emit('players-joined', { playersJoined: clients });
+        this.io.to(this.roomId).emit('players-joined', { playersJoined: clients });
     }
 
     isReady() {
