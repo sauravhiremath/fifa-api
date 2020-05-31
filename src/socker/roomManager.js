@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 
 import logger from '../middlewares/logger';
 import { isValid } from '../schema/rooms';
-import { SALT_ROUNDS } from '../env';
+import { SALT_ROUNDS, TURN_INTERVAL } from '../env';
 
 export default class Room {
     constructor(options) {
@@ -22,7 +22,7 @@ export default class Room {
      *                   If yes, then joins the room.
      *                   If no, then creates new room
      *
-     * @return   {bool}    Returns true if successfull, false otherwise
+     * @return   {bool}    Returns true if initialization is successfull, false otherwise
      */
     async init(username) {
         // Stores an array containing socket ids in 'roomId'
@@ -89,54 +89,120 @@ export default class Room {
         // Broadcast info about { all players and their ready status } joined to given room
         // Deafult status as 'Not ready'
         const { clients } = this.store;
-        this.io.to(this.roomId).emit('players-joined', { playersJoined: clients });
+        this.io.to(this.roomId).emit('show-players-joined', { playersJoined: clients });
     }
 
-    isReady() {
+    showTeams() {
+        // Broadcast Array of Teams [player_socket_id: [playerId1, playerId2]]
+        const { teams } = this.store;
+        this.io.to(this.roomId).emit('show-players-teams', teams);
+    }
+
+    async isReady() {
         // Mark player as ready  ---> to start the draft in the given room
-        this.socker.on('is-ready', () => {
+        await this.socker.on('is-ready', () => {
             this.store.clients.forEach(player => {
                 if (player.id === this.socker.id) {
                     player.readyStatus = true;
                 }
             });
         });
+
+        // If all players are ready then initiate beginDraft
+        const arePlayersReady = this.store.clients.every(player => player.readyStatus === true);
+        this.showPlayers();
+        if (arePlayersReady) {
+            this.store.teams = {};
+            this.beginDraft();
+        }
     }
 
-    beginDraft() {
+    async beginDraft() {
         // Uses shufflePlayers() --> Selects first player from list --> call startTimer()
-    }
 
-    endDraft() {
-        // End Current turn
+        this.store.clients = this.shufflePlayers(this.store.clients);
+        const { clients } = this.store;
+        this.showPlayers();
+        this.io.to(this.roomId).emit('draft-start', 'The players order is shuffled and the draft has started...');
+
+        for (const player of clients) {
+            this.io.to(player.id).emit('draft-message', 'It is your chance to pick');
+            this.io.to(this.roomId).emit('player-turn-start', `${player.username} is picking`);
+            // Actions in shiftTurn runs after specified interval
+            // eslint-disable-next-line no-await-in-loop
+            await this.shiftTurn(player, TURN_INTERVAL);
+        }
+
+        this.showTeams();
+        this.endDraft();
     }
 
     /**
-     * Summary.     Shuffle the players ready in a given room in random order
-     * Description. Shuffle the players ready in a given room in random order
-     *
-     * @listens     event:beginDraft(),nextTurn()
-     *
-     * @param       {string}       roomId - as specified by /^#([A-Z0-9]){6}$/
-     */
-    shufflePlayers() {
-        // Shuffle the order of players and return a new order
-    }
-
-    /**
-     * Summary.     Ends current turn and begins timer for next player
+     * Summary.     (NEEDS CHANGE) Ends current turn and begins timer for next player
      * Description. Check if turn is less than or equal to 15 (max players pick per draft)
      *              Begin timer for the next pick [ 30 secs each pic ]
      *              Run after shufflePlayers and each consecutive turns
      *
-     * @listens     event:beginDraft(),nextTurn()
+     * @listens     event:beginDraft()
      *
      * @param       {string}       roomId - as specified by /^#([A-Z0-9]){6}$/
      */
-    shiftTurn() {
+    shiftTurn(player, interval) {
         // Check if turn is less than or equal to 15 (max players pick per draft)
         // Begin timer for the next pick [ 30 secs each pic ]
         // Run after shufflePlayers and each consecutive turns
+        this.player.id.on('player-turn-end', selectedPlayerId => {
+            this.store.teams[this.player.id] = [...this.store.teams[this.player.id], selectedPlayerId];
+            return new Promise(resolve => {
+                this.io.to(this.roomId).emit('player-turn-end', `${player.username} chance ended`);
+                logger.info(`[TURN CHANGE] ${player.username} had synthetic turn change`);
+                resolve();
+            });
+        });
+
+        return new Promise(resolve =>
+            setTimeout(() => {
+                this.io.to(this.roomId).emit('player-turn-end', `${player.username} chance ended`);
+                logger.info(`[TURN CHANGE] ${player.username} had timeout turn change`);
+                this.socker.off('player-turn-end');
+                this.showTeams();
+                resolve();
+            }, interval)
+        );
+    }
+
+    endDraft() {
+        // End Current Draft
+        // Can save the teams in mongo for further collection
+        this.io.to(this.roomId).emit('draft-end', 'The draft has ended');
+    }
+
+    /**
+     * Summary.      Shuffle the players ready in a given room in random order
+     *
+     * Description.  Shuffle the players ready in a given room in random order.
+     *               Uses Fisher-Yates shuffle algorithm
+     *
+     * @listens      event:beginDraft()
+     *
+     * @param        {Array}    clients    Original clients list from this.store.clients
+     *
+     * @return       {Array}               Shuffled order of this.store.clients
+     */
+    shufflePlayers(clients) {
+        // Shuffle the order of players and return a new order
+        let j;
+        let x;
+        let i;
+
+        for (i = clients.length - 1; i > 0; i--) {
+            j = Math.floor(Math.random() * (i + 1));
+            x = clients[i];
+            clients[i] = clients[j];
+            clients[j] = x;
+        }
+
+        return clients;
     }
 
     /**
@@ -155,7 +221,7 @@ export default class Room {
         }
     }
 
-    disconnectHandler() {
+    onDisconnect() {
         this.socker.on('disconnect', () => {
             this.store.clients = this.store.clients.filter(player => player.id !== this.socker.id);
             this.showPlayers();

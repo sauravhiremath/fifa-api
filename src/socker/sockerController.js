@@ -21,9 +21,10 @@ export default app => {
 
         if (joinedRoom) {
             room.showPlayers();
+            room.isReady();
         }
 
-        room.disconnectHandler();
+        room.onDisconnect();
         // Const playersInRooms = room.getRoomInfo();
         // const roomList = Object.keys(rooms);
         // socket.emit('info', { playersInRooms, roomList });

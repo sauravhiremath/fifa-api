@@ -1,8 +1,11 @@
 export let host = '';
+export let TURN_INTERVAL = 0;
 if (process.env.NODE_ENV === 'production') {
     host = 'https://fifa.sauravmh.me';
+    TURN_INTERVAL = 30 * 1000;
 } else {
     host = 'http://localhost:3000';
+    TURN_INTERVAL = 10 * 1000;
 }
 
 export const API_PORT = 3003;
