@@ -154,4 +154,12 @@ export default class Room {
             logger.info(`Room created with roomId: ${this.roomId}`);
         }
     }
+
+    disconnectHandler() {
+        this.socker.on('disconnect', () => {
+            this.store.clients = this.store.clients.filter(player => player.id !== this.socker.id);
+            this.showPlayers();
+            logger.info('Client Disconnected!');
+        });
+    }
 }

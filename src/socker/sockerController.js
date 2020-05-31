@@ -23,9 +23,7 @@ export default app => {
             room.showPlayers();
         }
 
-        socket.on('disconnect', () => {
-            logger.info('Client Disconnected!');
-        });
+        room.disconnectHandler();
         // Const playersInRooms = room.getRoomInfo();
         // const roomList = Object.keys(rooms);
         // socket.emit('info', { playersInRooms, roomList });
