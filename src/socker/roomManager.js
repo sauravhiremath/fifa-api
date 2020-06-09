@@ -98,23 +98,25 @@ export default class Room {
         this.io.to(this.roomId).emit('show-players-teams', teams);
     }
 
-    async isReady() {
+    isReady() {
         // Mark player as ready  ---> to start the draft in the given room
-        await this.socker.on('is-ready', () => {
+        this.socker.on('is-ready', () => {
             this.store.clients.forEach(player => {
                 if (player.id === this.socker.id) {
                     player.readyStatus = true;
                 }
             });
-        });
+            this.showPlayers();
 
-        // If all players are ready then initiate beginDraft
-        const arePlayersReady = this.store.clients.every(player => player.readyStatus === true);
-        this.showPlayers();
-        if (arePlayersReady) {
-            this.store.teams = {};
-            this.beginDraft();
-        }
+            // If all players are ready then initiate beginDraft
+            const arePlayersReady = this.store.clients.every(player => player.readyStatus === true);
+            logger.info('All players ready check done it is: ' + arePlayersReady);
+            logger.info(this.store.clients);
+            if (arePlayersReady) {
+                this.store.teams = {};
+                this.beginDraft();
+            }
+        });
     }
 
     async beginDraft() {
