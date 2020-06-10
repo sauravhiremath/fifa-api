@@ -110,8 +110,6 @@ export default class Room {
 
             // If all players are ready then initiate beginDraft
             const arePlayersReady = this.store.clients.every(player => player.readyStatus === true);
-            logger.info('All players ready check done it is: ' + arePlayersReady);
-            logger.info(this.store.clients);
             if (arePlayersReady) {
                 this.store.teams = {};
                 this.beginDraft();
@@ -149,23 +147,23 @@ export default class Room {
      *
      * @param       {string}       roomId - as specified by /^#([A-Z0-9]){6}$/
      */
-    shiftTurn(player, interval) {
+    shiftTurn(playerInfo, interval) {
         // Check if turn is less than or equal to 15 (max players pick per draft)
         // Begin timer for the next pick [ 30 secs each pic ]
         // Run after shufflePlayers and each consecutive turns
-        this.player.id.on('player-turn-end', selectedPlayerId => {
-            this.store.teams[this.player.id] = [...this.store.teams[this.player.id], selectedPlayerId];
+        this.socker.on('player-turn-end', itemId => {
+            this.store.teams[this.player.id] = [...this.store.teams[this.playerInfo.id], itemId];
             return new Promise(resolve => {
-                this.io.to(this.roomId).emit('player-turn-end', `${player.username} chance ended`);
-                logger.info(`[TURN CHANGE] ${player.username} had synthetic turn change`);
+                this.io.to(this.roomId).emit('player-turn-end', `${playerInfo.username} chance ended`);
+                logger.info(`[TURN CHANGE] ${playerInfo.username} had synthetic turn change`);
                 resolve();
             });
         });
 
         return new Promise(resolve =>
             setTimeout(() => {
-                this.io.to(this.roomId).emit('player-turn-end', `${player.username} chance ended`);
-                logger.info(`[TURN CHANGE] ${player.username} had timeout turn change`);
+                this.io.to(this.roomId).emit('player-turn-end', `${playerInfo.username} chance ended`);
+                logger.info(`[TURN CHANGE] ${playerInfo.username} had timeout turn change`);
                 this.socker.off('player-turn-end');
                 this.showTeams();
                 resolve();
