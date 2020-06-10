@@ -111,7 +111,6 @@ export default class Room {
             // If all players are ready then initiate beginDraft
             const arePlayersReady = this.store.clients.every(player => player.readyStatus === true);
             if (arePlayersReady) {
-                this.store.teams = {};
                 this.beginDraft();
             }
         });
@@ -121,20 +120,13 @@ export default class Room {
         // Uses shufflePlayers() --> Selects first player from list --> call startTimer()
 
         this.store.clients = this.shufflePlayers(this.store.clients);
-        const { clients } = this.store;
         this.showPlayers();
         this.io.to(this.roomId).emit('draft-start', 'The players order is shuffled and the draft has started...');
 
-        for (const player of clients) {
-            this.io.to(player.id).emit('draft-message', 'It is your chance to pick');
-            this.io.to(this.roomId).emit('player-turn-start', `${player.username} is picking`);
-            // Actions in shiftTurn runs after specified interval
-            // eslint-disable-next-line no-await-in-loop
-            await this.shiftTurn(player, TURN_INTERVAL);
-        }
+        // Store the initial common draft object
+        this.store.draft = { teams: {}, sTime: new Date(), timeOut: 0, turnNum: 0 };
 
         this.showTeams();
-        this.endDraft();
     }
 
     /**
@@ -147,28 +139,24 @@ export default class Room {
      *
      * @param       {string}       roomId - as specified by /^#([A-Z0-9]){6}$/
      */
-    shiftTurn(playerInfo, interval) {
+    shiftTurn() {
         // Check if turn is less than or equal to 15 (max players pick per draft)
         // Begin timer for the next pick [ 30 secs each pic ]
         // Run after shufflePlayers and each consecutive turns
-        this.socker.on('player-turn-end', itemId => {
-            this.store.teams[this.player.id] = [...this.store.teams[this.playerInfo.id], itemId];
-            return new Promise(resolve => {
-                this.io.to(this.roomId).emit('player-turn-end', `${playerInfo.username} chance ended`);
-                logger.info(`[TURN CHANGE] ${playerInfo.username} had synthetic turn change`);
-                resolve();
-            });
-        });
+        this.socker.on('player-turn-pass', itemId => {
+            if (this.store.clients[this.store.draft.turnNum].id === this.socker.id) {
+                // Add the selected itemId to the collection
+                this.store.draft.teams[this.player.id] = [
+                    ...this.store.teams?.[this.socker.id],
+                    ...(itemId ? [itemId] : [])
+                ];
 
-        return new Promise(resolve =>
-            setTimeout(() => {
-                this.io.to(this.roomId).emit('player-turn-end', `${playerInfo.username} chance ended`);
-                logger.info(`[TURN CHANGE] ${playerInfo.username} had timeout turn change`);
-                this.socker.off('player-turn-end');
-                this.showTeams();
-                resolve();
-            }, interval)
-        );
+                this._resetTimeOut();
+                this._nextTurn();
+            }
+
+            this.showTeams();
+        });
     }
 
     endDraft() {
@@ -218,6 +206,39 @@ export default class Room {
     createRoom() {
         if (isValid(this.roomId)) {
             logger.info(`Room created with roomId: ${this.roomId}`);
+        }
+    }
+
+    _nextTurn() {
+        this.io
+            .to(this.roomId)
+            .emit('player-turn-end', `${this.store.clients[this.store.draft.turnNum].username} chance ended`);
+        logger.info(`[TURN CHANGE] ${this.store.clients[this.store.draft.turnNum].username} had timeout turn change`);
+
+        const currentTurnNum = this.store.draft.turnNum++ % this.store.clients.length;
+
+        this.io.to(this.store.clients[currentTurnNum].id).emit('draft-message', 'It is your chance to pick');
+        this.io
+            .to(this.roomId)
+            .emit('player-turn-start', `${this.store.clients[this.currentTurnNum].username} is picking`);
+        logger.info(
+            `[TURN CHANGE] ${
+                this.store.clients[this.currentTurnNum].username
+            } is the new drafter. Turn number: ${currentTurnNum}`
+        );
+        this._triggerTimeout();
+    }
+
+    _triggerTimeout() {
+        this.store.draft.timeOut = setTimeout(() => {
+            this._next_turn();
+        }, TURN_INTERVAL);
+    }
+
+    _resetTimeOut() {
+        if (typeof this.store.draft.timeOut === 'object') {
+            logger.info('[TURN CHANGE] Timeout reset');
+            clearTimeout(this.store.draft.timeOut);
         }
     }
 
