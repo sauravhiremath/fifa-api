@@ -246,8 +246,11 @@ export default class Room {
 
     onDisconnect() {
         this.socker.on('disconnect', () => {
-            this.store.clients = this.store.clients.filter(player => player.id !== this.socker.id);
-            this.showPlayers();
+            if (this.store) {
+                this.store.clients = this.store.clients.filter(player => player.id !== this.socker.id);
+                this.showPlayers();
+            }
+
             logger.info('Client Disconnected!');
         });
     }
