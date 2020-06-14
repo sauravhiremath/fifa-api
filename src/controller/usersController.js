@@ -1,7 +1,7 @@
 import usersModel from '../models/usersModel';
 
 const usersController = {
-    getAll: async (req, res, next) => {
+    getAll: async (req, res, _) => {
         usersModel.find({}, (err, users) => {
             if (err) {
                 return res.json(err);
@@ -11,7 +11,7 @@ const usersController = {
         });
     },
 
-    getOne: (req, res, next) => {
+    getOne: (req, res, _) => {
         usersModel.findById(req.params.id, (err, user) => {
             if (err) {
                 return res.json(err);
@@ -21,7 +21,7 @@ const usersController = {
         });
     },
 
-    create: (req, res, next) => {
+    create: (req, res, _) => {
         usersModel.create(req.body, (err, user) => {
             if (err) {
                 return res.json(err);
@@ -31,7 +31,7 @@ const usersController = {
         });
     },
 
-    update: (req, res, next) => {
+    update: (req, res, _) => {
         usersModel.findOneAndUpdate(req.params.id, req.body, { new: true }, (err, user) => {
             if (err) {
                 return res.json(err);
@@ -41,8 +41,8 @@ const usersController = {
         });
     },
 
-    delete: (req, res, next) => {
-        usersModel.remove({ _id: req.params.id }, (err, ok) => {
+    delete: (req, res, _) => {
+        usersModel.remove({ _id: req.params.id }, (err, _) => {
             if (err) {
                 return res.json(err);
             }
