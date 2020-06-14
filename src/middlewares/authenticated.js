@@ -4,7 +4,7 @@ import { ErrorHandler, logger } from './';
 
 const authenticated = (req, res, next) => {
     const token = req.headers.authorization;
-    jwt.verify(token, API_KEY, (err, decoded) => {
+    jwt.verify(token, API_KEY, (err, _) => {
         if (err) {
             res.json('Token not provided');
         } else {

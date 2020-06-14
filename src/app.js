@@ -7,7 +7,7 @@ import cors from 'cors';
 
 import { socker } from './socker';
 import { handleError, authenticated, logger } from './middlewares';
-import { corsOptions, API_PORT } from './env';
+import { API_PORT } from './env';
 
 const app = express();
 const server = new http.Server(app);
@@ -17,10 +17,11 @@ app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/users', authenticated);
+app.use('/search', authenticated);
 
 routes(app);
 
-app.use((err, req, res, next) => {
+app.use((err, req, res, _) => {
     handleError(err, res);
 });
 
