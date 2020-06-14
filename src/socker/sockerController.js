@@ -22,7 +22,7 @@ export default app => {
         if (joinedRoom) {
             room.showPlayers();
             room.isReady();
-            room.beginDraft();
+            room.shiftTurn();
         }
 
         room.onDisconnect();
