@@ -123,8 +123,10 @@ export default class Room {
         this.showPlayers();
         this.io.to(this.roomId).emit('draft-start', 'The players order is shuffled and the draft has started...');
         logger.info('Draft started...');
-        // Store the initial common draft object
-        this.store.draft = { teams: {}, sTime: new Date(), timeOut: 0, turnNum: 0 };
+
+        // Reset draft object to initial state
+        this._resetCurrentGame();
+
         this._emitTurn(0);
         this.showTeams();
     }
@@ -244,11 +246,22 @@ export default class Room {
         }
     }
 
+    _resetCurrentGame() {
+        if (this.store) {
+            this.store.draft = { teams: {}, sTime: new Date(), timeOut: 0, turnNum: 0 };
+        }
+    }
+
     onDisconnect() {
         this.socker.on('disconnect', () => {
             if (this.store) {
                 this.store.clients = this.store.clients.filter(player => player.id !== this.socker.id);
                 this.showPlayers();
+
+                // Handle game reset
+                this._resetTimeOut();
+                this.endDraft();
+                this._resetCurrentGame();
             }
 
             logger.info('Client Disconnected!');
