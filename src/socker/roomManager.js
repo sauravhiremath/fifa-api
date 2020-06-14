@@ -254,7 +254,7 @@ export default class Room {
 
     onDisconnect() {
         this.socker.on('disconnect', () => {
-            if (this.store) {
+            try {
                 this.store.clients = this.store.clients.filter(player => player.id !== this.socker.id);
                 this.showPlayers();
 
@@ -262,6 +262,8 @@ export default class Room {
                 this._resetTimeOut();
                 this.endDraft();
                 this._resetCurrentGame();
+            } catch (_) {
+                logger.info('[FORCE DISCONNECT] Server closed forcefully');
             }
 
             logger.info('Client Disconnected!');
