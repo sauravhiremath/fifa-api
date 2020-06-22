@@ -12,17 +12,17 @@ const db = mongoose.connection;
 
 // When successfully connected
 db.on('connected', () => {
-    logger.info(`Mongoose default connection open to ${DB_URL}`);
+    logger.info('Mongoose connection open to ATLAS Server');
 });
 
 // If the connection throws an error
 db.on('error', err => {
-    logger.info(`Mongoose default connection error: ${err}`);
+    logger.info(`Mongoose connection error: ${err}`);
 });
 
 // When the connection is disconnected
 db.on('disconnected', () => {
-    logger.info('Mongoose default connection disconnected');
+    logger.info('Mongoose connection disconnected');
 });
 
 export default mongoose;

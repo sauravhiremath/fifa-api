@@ -1,12 +1,12 @@
 ## Development mode :
-after install packages with ``` npm install  ``` or ``` yarn install ``` run this command:
+After install packages with ``` npm install  ``` run this command:
 ```
   npm run start
 ```
 
 ## Linting Check
 before commit, to prevent build fails
-```
+```bash
   npm run lint
 ```
 

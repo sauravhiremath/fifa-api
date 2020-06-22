@@ -2,11 +2,12 @@ import socketio from 'socket.io';
 
 import { logger } from '../middlewares';
 import Room from './roomManager';
+import { host } from '../env';
 
 export default app => {
     const io = socketio.listen(app, {
         path: '/classic-mode',
-        origins: ['http://localhost:3000']
+        origins: [host]
     });
 
     logger.info('Started listening!');
@@ -26,9 +27,6 @@ export default app => {
         }
 
         room.onDisconnect();
-        // Const playersInRooms = room.getRoomInfo();
-        // const roomList = Object.keys(rooms);
-        // socket.emit('info', { playersInRooms, roomList });
     });
 
     return io;
