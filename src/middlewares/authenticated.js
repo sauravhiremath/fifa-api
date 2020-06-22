@@ -18,7 +18,6 @@ export const verifyToken = token => {
         const decoded = jwt.verify(token, API_KEY);
         return decoded;
     } catch (err) {
-        logger.debug(err);
         throw new ErrorHandler(401, 'Invalid token or unauthorized operation. Sign in again!');
     }
 };

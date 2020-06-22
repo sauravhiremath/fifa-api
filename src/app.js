@@ -31,4 +31,5 @@ app.listen(API_PORT, () => {
 
 server.listen(Number(API_PORT) + 1, () => {
     logger.info(`Socker listening on port ${Number(API_PORT) + 1}!`);
+    logger.info(`Api and socker whitelisted for ${host}`);
 });
