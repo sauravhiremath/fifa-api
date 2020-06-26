@@ -94,7 +94,7 @@ export default class Room {
 
     showTeams() {
         // Broadcast Array of Teams [player_socket_id: [playerId1, playerId2]]
-        const { teams } = this.store;
+        const { teams } = this.store.draft;
         this.io.to(this.roomId).emit('show-players-teams', { teams });
     }
 
@@ -146,14 +146,13 @@ export default class Room {
         // Check if turn is less than or equal to 15 (max players pick per draft)
         // Begin timer for the next pick [ 30 secs each pic ]
         // Run after shufflePlayers and each consecutive turns
-        this.socker.on('player-turn-pass', (itemId = 'no-item-selected') => {
+        this.socker.on('player-turn-pass', (item = undefined) => {
             // NAME Change: player-turn-trigger would be better name
             if (this.store.clients[this.store.draft.turnNum].id === this.socker.id) {
-                // Add the selected itemId to the collection
-                this.store.draft.teams[this.socker.id] = [
-                    ...(this.store.draft.teams[this.socker.id] ? [this.store.draft.teams[this.socker.id]] : []),
-                    ...(itemId ? [itemId] : [])
-                ];
+                // Add the selected item object to the collection
+                if (item) {
+                    this.store.draft.teams[this.socker.id] = [...(this.store.draft.teams[this.socker.id] || []), item];
+                }
 
                 this._resetTimeOut();
                 this._nextTurn();
