@@ -47,7 +47,7 @@ export default class Room {
                 }
 
                 await this.socker.join(this.roomId);
-                this.store.clients.push({ id: this.socker.id, username, readyStatus: false });
+                this.store.clients.push({ id: this.socker.id, username, isReady: false });
                 this.socker.username = username;
                 this.socker.emit('[SUCCESS] Successfully initialised');
                 logger.info(`[JOIN] Client joined room ${this.roomId}`);
@@ -72,7 +72,7 @@ export default class Room {
                     this.store.password = await bcrypt.hash(this.password, SALT_ROUNDS);
                 }
 
-                this.store.clients = [{ id: this.socker.id, username, readyStatus: false }];
+                this.store.clients = [{ id: this.socker.id, username, isReady: false }];
                 this.socker.username = username;
                 logger.info(`[CREATE] Client created and joined room ${this.roomId}`);
                 this.socker.emit('[SUCCESS] Successfully initialised');
@@ -95,7 +95,7 @@ export default class Room {
     showTeams() {
         // Broadcast Array of Teams [player_socket_id: [playerId1, playerId2]]
         const { teams } = this.store;
-        this.io.to(this.roomId).emit('show-players-teams', teams);
+        this.io.to(this.roomId).emit('show-players-teams', { teams });
     }
 
     isReady() {
@@ -103,13 +103,13 @@ export default class Room {
         this.socker.on('is-ready', () => {
             this.store.clients.forEach(player => {
                 if (player.id === this.socker.id) {
-                    player.readyStatus = true;
+                    player.isReady = true;
                 }
             });
             this.showPlayers();
 
             // If all players are ready then initiate beginDraft
-            const arePlayersReady = this.store.clients.every(player => player.readyStatus === true);
+            const arePlayersReady = this.store.clients.every(player => player.isReady === true);
             if (arePlayersReady) {
                 this.beginDraft();
             }
@@ -140,12 +140,13 @@ export default class Room {
      * @listens     event:beginDraft()
      *
      * @param       {string}       roomId - as specified by /^#([A-Z0-9]){6}$/
+     *
      */
     shiftTurn() {
         // Check if turn is less than or equal to 15 (max players pick per draft)
         // Begin timer for the next pick [ 30 secs each pic ]
         // Run after shufflePlayers and each consecutive turns
-        this.socker.on('player-turn-pass', (itemId = 'no obj') => {
+        this.socker.on('player-turn-pass', (itemId = 'no-item-selected') => {
             // NAME Change: player-turn-trigger would be better name
             if (this.store.clients[this.store.draft.turnNum].id === this.socker.id) {
                 // Add the selected itemId to the collection
@@ -216,6 +217,8 @@ export default class Room {
         this.io
             .to(this.roomId)
             .emit('player-turn-end', `${this.store.clients[this.store.draft.turnNum].username} chance ended`);
+        this.io.to(this.store.clients[this.store.draft.turnNum].id).emit('personal-turn-end', 'Your chance ended');
+
         logger.info(`[TURN CHANGE] ${this.store.clients[this.store.draft.turnNum].username} had timeout turn change`);
 
         const currentTurnNum = (this.store.draft.turnNum + 1) % this.store.clients.length;
@@ -225,7 +228,7 @@ export default class Room {
     }
 
     _emitTurn(currentTurnNum) {
-        this.io.to(this.store.clients[currentTurnNum].id).emit('draft-message', 'It is your chance to pick');
+        this.io.to(this.store.clients[currentTurnNum].id).emit('personal-turn-start', 'It is your chance to pick');
         this.io.to(this.roomId).emit('player-turn-start', `${this.store.clients[currentTurnNum].username} is picking`);
         logger.info(
             `[TURN CHANGE] ${this.store.clients[currentTurnNum].username} is the new drafter. Turn number: ${currentTurnNum}`
