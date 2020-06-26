@@ -7,7 +7,7 @@ import { host } from '../env';
 export default app => {
     const io = socketio.listen(app, {
         path: '/classic-mode',
-        origins: [`${host}:80`]
+        origins: [`${host}`]
     });
 
     logger.info('Started listening!');
