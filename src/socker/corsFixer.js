@@ -1,6 +1,6 @@
 export const fixedOrigin = hosts => {
     const isPortPresent = /(https?:\/\/.*):(\d*)\/?(.*)/g;
-    return hosts.filter(host => {
+    return hosts.map(host => {
         // eslint-disable-next-line no-eq-null, eqeqeq
         if (host.indexOf('https:') !== -1 && host.match(isPortPresent) == null) {
             return host.concat(':443');
