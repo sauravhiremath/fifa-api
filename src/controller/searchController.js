@@ -12,8 +12,8 @@ const searchController = {
         try {
             const results = await client.search(requests);
             res.status(200).send(results);
-        } catch (error) {
-            logger.error(error);
+        } catch {
+            logger.error('Algolia Error. Kindly check Algolia API keys!');
         }
     }
 };

@@ -1,19 +1,20 @@
 import socketio from 'socket.io';
 
-import { logger } from '../middlewares';
+import { logger, verifyToken } from '../middlewares';
 import Room from './roomManager';
+import { fixedOrigin } from './corsFixer';
 import { host } from '../env';
 
 export default app => {
     const io = socketio.listen(app, {
         path: '/classic-mode',
-        origins: [`${host}:*`, `${host}`]
+        origins: fixedOrigin([`${host}`])
     });
 
     logger.info('Started listening!');
 
     const classicMode = io.of('/classic-mode');
-    classicMode.on('connection', async socket => {
+    classicMode.use(verifySocker).on('connection', async socket => {
         const { username, roomId, password, action } = socket.handshake.query;
         const room = new Room({ io: classicMode, socket, username, roomId, password, action });
 
@@ -30,4 +31,12 @@ export default app => {
     });
 
     return io;
+};
+
+const verifySocker = (socket, next) => {
+    if (socket.handshake.query && socket.handshake.query.token) {
+        const decoded = verifyToken(socket.handshake.query.token);
+        socket.decoded = decoded;
+        next();
+    }
 };

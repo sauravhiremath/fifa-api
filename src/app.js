@@ -21,7 +21,7 @@ app.use('/search', authenticated);
 
 routes(app);
 
-app.use((err, req, res, _) => {
+app.use((err, _req, res, _) => {
     handleError(err, res);
 });
 
