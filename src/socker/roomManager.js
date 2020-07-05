@@ -242,7 +242,7 @@ export default class Room {
     }
 
     _resetTimeOut() {
-        if (typeof this.store.draft.timeOut === 'object') {
+        if (typeof this.store.draft?.timeOut === 'object') {
             logger.info('[TURN CHANGE] Timeout reset');
             clearTimeout(this.store.draft.timeOut);
         }
@@ -250,6 +250,7 @@ export default class Room {
 
     _resetCurrentGame() {
         if (this.store) {
+            this._resetTimeOut();
             this.store.draft = { teams: {}, sTime: new Date(), timeOut: 0, turnNum: 0 };
         }
     }
