@@ -17,7 +17,7 @@ export const DB_URL = `mongodb+srv://saurav:${MONGO_PASSWORD}@fifa.ejduy.mongodb
 export let host = '';
 export let TURN_INTERVAL = 0;
 if (process.env.NODE_ENV === 'production') {
-    host = 'https://fifa.sauravmh.me';
+    host = ['https://fifa.sauravmh.com', 'https://sauravmh.vercel.app'];
     TURN_INTERVAL = 60 * 1000;
 } else {
     host = 'http://localhost:3000';
