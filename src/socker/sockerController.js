@@ -3,12 +3,12 @@ import socketio from 'socket.io';
 import { logger, verifyToken } from '../middlewares';
 import Room from './roomManager';
 import { fixedOrigin } from './corsFixer';
-import { host } from '../env';
+import { hosts } from '../env';
 
 export default app => {
     const io = socketio.listen(app, {
         path: '/classic-mode',
-        origins: fixedOrigin([`${host}`])
+        origins: fixedOrigin(hosts)
     });
 
     logger.info('Started listening!');

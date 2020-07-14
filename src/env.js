@@ -14,13 +14,13 @@ export const {
 
 export const DB_URL = `mongodb+srv://saurav:${MONGO_PASSWORD}@fifa.ejduy.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`;
 
-export let host = '';
+export let hosts = [];
 export let TURN_INTERVAL = 0;
 if (process.env.NODE_ENV === 'production') {
-    host = ['https://fifa.sauravmh.com', 'https://sauravmh.vercel.app'];
+    hosts = ['https://fifa.sauravmh.com', 'https://sauravmh.vercel.app'];
     TURN_INTERVAL = 60 * 1000;
 } else {
-    host = 'http://localhost:3000';
+    hosts = ['http://localhost:3000'];
     TURN_INTERVAL = 10 * 1000;
 }
 
