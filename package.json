@@ -31,7 +31,7 @@
     "@babel/runtime": "^7.9.2",
     "algoliasearch": "^4.3.0",
     "babel-eslint": "^10.1.0",
-    "bcrypt": "^4.0.1",
+    "bcrypt": "^5.0.0",
     "dateformat": "^3.0.3",
     "dotenv": "^8.2.0",
     "eslint": "^6.8.0",
