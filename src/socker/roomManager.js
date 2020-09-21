@@ -150,9 +150,6 @@ export default class Room {
      * @access    public
      */
     shiftTurn() {
-        // Check if turn is less than or equal to 15 (max players pick per draft)
-        // Begin timer for the next pick [ 30 secs each pic ]
-        // Run after shufflePlayers and each consecutive turns
         this.socker.on('player-turn-pass', (item = undefined) => {
             // NAME Change: player-turn-trigger would be better name
             if (this.store.clients[this.store.draft.turnNum].id === this.socker.id) {
@@ -175,7 +172,7 @@ export default class Room {
      * @access    public
      */
     endDraft() {
-        // TODO: Save the teams in mongo for further collection
+        // TODO: Save the teams in DB as a collection
         this.io.to(this.roomId).emit('draft-end', 'The draft has ended');
     }
 
