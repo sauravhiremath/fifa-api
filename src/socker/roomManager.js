@@ -245,8 +245,8 @@ export default class Room {
                 sTime: new Date(),
                 timeOut: 0,
                 turnNum: 0,
-                maxPlayersLimit: this.options.maxPlayersLimit || MAX_PLAYERS_DEFAULT,
-                maxTimerLimit: this.options.maxTimerLimit || MAX_TIMER_DEFAULT
+                maxPlayersLimit: this.options?.maxPlayersLimit || MAX_PLAYERS_DEFAULT,
+                maxTimerLimit: this.options?.maxTimerLimit || MAX_TIMER_DEFAULT
             };
         }
 

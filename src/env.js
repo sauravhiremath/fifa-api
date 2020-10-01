@@ -13,15 +13,14 @@ export const {
 } = process.env;
 
 export const DB_URL = `mongodb+srv://saurav:${MONGO_PASSWORD}@fifa.ejduy.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`;
+export const MAX_TIMER_DEFAULT = 120 * 1000;
+export const MAX_PLAYERS_DEFAULT = 14;
 
 export let hosts = [];
-export let MAX_TIMER_DEFAULT = 0;
 if (process.env.NODE_ENV === 'production') {
     hosts = ['https://fifa.sauravmh.com', 'https://sauravmh.vercel.app'];
-    MAX_TIMER_DEFAULT = 5 * 60 * 1000;
 } else {
     hosts = ['http://localhost:3000'];
-    MAX_TIMER_DEFAULT = 10 * 1000;
 }
 
 export const ROOM_ID_RX = /^([A-Z0-9]){6}$/;
