@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 
 import logger from '../middlewares/logger';
-import { SALT_ROUNDS, TURN_INTERVAL } from '../env';
+import { SALT_ROUNDS, MAX_PLAYERS_DEFAULT, MAX_TIMER_DEFAULT } from '../env';
 
 export default class Room {
     constructor(options) {
@@ -11,6 +11,7 @@ export default class Room {
         this.roomId = options.roomId;
         this.password = options.password; // Optional
         this.action = options.action; // [join, create]
+        this.options = JSON.parse(options.options); // {maxTimerLimit, maxPlayerLimit}
         this.store = options.io.adapter; // Later expanded to io.adapter.rooms[roomId]
     }
 
@@ -73,6 +74,7 @@ export default class Room {
                 }
 
                 this.store.clients = [{ id: this.socker.id, username, isReady: false }];
+
                 this.socker.username = username;
                 logger.info(`[CREATE] Client created and joined room ${this.roomId}`);
                 this.socker.emit('[SUCCESS] Successfully initialised');
@@ -225,7 +227,7 @@ export default class Room {
     _triggerTimeout() {
         this.store.draft.timeOut = setTimeout(() => {
             this._nextTurn();
-        }, TURN_INTERVAL);
+        }, this.store.draft.maxTimerLimit);
     }
 
     _resetTimeOut() {
@@ -238,8 +240,17 @@ export default class Room {
     _resetCurrentGame() {
         if (this.store) {
             this._resetTimeOut();
-            this.store.draft = { teams: {}, sTime: new Date(), timeOut: 0, turnNum: 0 };
+            this.store.draft = {
+                teams: {},
+                sTime: new Date(),
+                timeOut: 0,
+                turnNum: 0,
+                maxPlayersLimit: this.options?.maxPlayersLimit || MAX_PLAYERS_DEFAULT,
+                maxTimerLimit: this.options?.maxTimerLimit || MAX_TIMER_DEFAULT
+            };
         }
+
+        logger.info(`[USER-CONFIG] ${JSON.stringify(this.options)}`);
     }
 
     /**

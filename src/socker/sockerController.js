@@ -15,8 +15,8 @@ export default app => {
 
     const classicMode = io.of('/classic-mode');
     classicMode.use(verifySocker).on('connection', async socket => {
-        const { username, roomId, password, action } = socket.handshake.query;
-        const room = new Room({ io: classicMode, socket, username, roomId, password, action });
+        const { username, roomId, password, action, options } = socket.handshake.query;
+        const room = new Room({ io: classicMode, socket, username, roomId, password, action, options });
 
         const joinedRoom = await room.init(username);
         logger.info('Client Connected');
