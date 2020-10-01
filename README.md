@@ -2,15 +2,18 @@
 This is the backend for **"Football Draft Simulator"** project. It exposes a http server and a websockets server in NodeJS environment. Also servers the Algolia Search engine for supporting football players search from data scraped using **[Football Players Data Crawler](https://github.com/sauravhiremath/fifa-stats-crawler)**
 
 ## How the game works
-It is a turn-based multiplayer game. Where people enter and create a room. Other people hop into the room. 
 
-Then the game begins where all players are shuffled and first-person gets the chance to pick the football-player he wants. He can search from the list of players (viewing their stats, position, ratings, and other details) and confirm his selection within the allocation time. Now, the turn is passed to another player. 
+It's a turn-based multiplayer game. This game in particular allows you to build your own Football Team, by choosing players based on turns. You can search these football players in the same platform. Filter them based on any stats (their name, rating, team, positions, and a lot more!)
 
-This repeats until every person has picked their whole football squad. There are various modes you can choose from
+**To play:**
+- Create a room (add a password, if you wanna keep it private)
+- Share the room ID with your friends, and they can join the room
+- Once, all players are ready the draft begins
+- Each user can choose their player from the search box
+  - Every turn has a time limit, so pick before the time runs out!
+- After you create your dream teams, use the same teams on your FIFA game and play with each other
 
-Different modes include:
-- **Classic Mode** - Classic football turn based draft
-- **Money in the Bank Mode** - Football Draft with player bettings and selling
+This was created mainly for offline gaming, to avoid writing player lists manually on a paper or sending on chats when creating custom teams amongst a group of friends. Easily search and add players to your teams with this platform as a middleman :smile:
 
 ## Project Architecture
 ![architecture](https://miro.medium.com/max/1400/1*QEqiWlUQaaJ1DsjEUhN4dA.png)
