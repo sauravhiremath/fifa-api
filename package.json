@@ -38,7 +38,7 @@
     "eslint-config-prettier": "6.15.0",
     "eslint-config-xo": "0.33.1",
     "eslint-plugin-prettier": "3.1.4",
-    "nodemon": "2.0.3",
+    "nodemon": "2.0.6",
     "prettier": "2.0.5",
     "winston": "2.4.3"
   }
