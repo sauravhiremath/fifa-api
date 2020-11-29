@@ -49,6 +49,6 @@
     "eslint-plugin-prettier": "3.1.4",
     "nodemon": "2.0.6",
     "prettier": "2.2.1",
-    "winston": "2.4.5"
+    "winston": "3.3.3"
   }
 }
