@@ -32,7 +32,7 @@
     "algoliasearch": "4.8.2",
     "babel-eslint": "10.1.0",
     "bcrypt": "5.0.0",
-    "dateformat": "3.0.3",
+    "dateformat": "4.0.0",
     "dotenv": "8.2.0",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.15.0",
