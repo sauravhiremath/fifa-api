@@ -46,7 +46,7 @@
     "dotenv": "8.2.0",
     "eslint-config-prettier": "6.15.0",
     "eslint-config-xo": "0.33.1",
-    "eslint-plugin-prettier": "3.1.4",
+    "eslint-plugin-prettier": "3.2.0",
     "nodemon": "2.0.6",
     "prettier": "2.2.1",
     "winston": "3.3.3"
