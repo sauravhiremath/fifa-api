@@ -12,7 +12,7 @@ export default app => {
         origins: fixedOrigin(hosts)
     });
 
-    consola.info('Started listening!');
+    consola.info('Socketio initialised!');
 
     const classicMode = io.of('/classic-mode');
     classicMode.use(verifySocker).on('connection', async socket => {

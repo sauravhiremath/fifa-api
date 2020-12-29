@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
-import { DB_URL_DEV } from './../env';
+import { DB_URL } from './../env';
 import consola from 'consola';
 
-mongoose.connect(DB_URL_DEV, {
+mongoose.connect(DB_URL, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true
@@ -12,7 +12,7 @@ const db = mongoose.connection;
 
 // When successfully connected
 db.on('connected', () => {
-    consola.info('Mongoose connection open to ATLAS Server');
+    consola.success('Mongoose connection open to ATLAS Server');
 });
 
 // If the connection throws an error
