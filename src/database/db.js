@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
-import { DB_URL } from './../env';
-import logger from '../middlewares/logger';
+import { DB_URL_DEV } from './../env';
+import consola from 'consola';
 
-mongoose.connect(DB_URL, {
+mongoose.connect(DB_URL_DEV, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true
@@ -12,17 +12,17 @@ const db = mongoose.connection;
 
 // When successfully connected
 db.on('connected', () => {
-    logger.info('Mongoose connection open to ATLAS Server');
+    consola.info('Mongoose connection open to ATLAS Server');
 });
 
 // If the connection throws an error
 db.on('error', err => {
-    logger.info(`Mongoose connection error: ${err}`);
+    consola.warn(`Mongoose connection error: ${err}`);
 });
 
 // When the connection is disconnected
 db.on('disconnected', () => {
-    logger.info('Mongoose connection disconnected');
+    consola.warn('Mongoose connection disconnected');
 });
 
 export default mongoose;

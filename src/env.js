@@ -5,14 +5,13 @@ export const {
     ALGOLIA_ID,
     ALGOLIA_SEARCH_API_KEY,
     ALGOLIA_INDEX_NAME,
-    DB_NAME,
-    MONGO_PASSWORD,
+    DB_URL,
     API_PORT,
     API_KEY,
     SALT_ROUNDS
 } = process.env;
 
-export const DB_URL = `mongodb+srv://saurav:${MONGO_PASSWORD}@fifa.ejduy.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`;
+export const DB_URL_DEV = 'mongodb://localhost:27017/fifa.db';
 export const MAX_TIMER_DEFAULT = 120 * 1000;
 export const MAX_PLAYERS_DEFAULT = 14;
 
