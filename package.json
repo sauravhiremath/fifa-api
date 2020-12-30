@@ -14,7 +14,10 @@
   "renovate": {
     "packageRules": [
       {
-        "packagePatterns": [ "eslint", "^@types/" ],
+        "packagePatterns": [
+          "eslint",
+          "^@types/"
+        ],
         "groupName": "eslint",
         "automerge": true
       }
@@ -24,13 +27,12 @@
   "url": "https://github.com/sauravhiremath/fifa-api",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "eslint": "^7.14.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.9.9",
+    "mongoose": "^5.11.9",
     "socket.io": "^3.0.0"
   },
   "devDependencies": {
@@ -42,13 +44,13 @@
     "algoliasearch": "4.8.3",
     "babel-eslint": "10.1.0",
     "bcrypt": "5.0.0",
+    "consola": "^2.15.0",
     "dateformat": "4.4.1",
     "dotenv": "8.2.0",
     "eslint-config-prettier": "7.1.0",
     "eslint-config-xo": "0.33.1",
     "eslint-plugin-prettier": "3.3.0",
     "nodemon": "2.0.6",
-    "prettier": "2.2.1",
-    "winston": "3.3.3"
+    "prettier": "2.2.1"
   }
 }

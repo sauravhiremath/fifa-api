@@ -1,5 +1,5 @@
 import algoliasearch from 'algoliasearch/lite';
-import { logger } from '../middlewares';
+import consola from 'consola';
 
 import { ALGOLIA_ID, ALGOLIA_SEARCH_API_KEY } from '../env';
 
@@ -13,7 +13,7 @@ const searchController = {
             const results = await client.search(requests);
             res.status(200).send(results);
         } catch {
-            logger.error('Algolia Error. Kindly check Algolia API keys!');
+            consola.error('Algolia Error. Kindly check Algolia API keys!');
         }
     }
 };

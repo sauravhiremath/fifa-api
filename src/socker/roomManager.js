@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 
-import logger from '../middlewares/logger';
+import consola from 'consola';
 import { SALT_ROUNDS, MAX_PLAYERS_DEFAULT, MAX_TIMER_DEFAULT } from '../env';
 
 export default class Room {
@@ -29,8 +29,8 @@ export default class Room {
         // Stores an array containing socket ids in 'roomId'
         let clients;
         await this.io.in(this.roomId).clients((e, _clients) => {
-            clients = _clients || logger.error('[INTERNAL ERROR] Room creation failed!');
-            logger.debug(`Connected Clients are: ${clients}`);
+            clients = _clients || consola.error('[INTERNAL ERROR] Room creation failed!');
+            consola.debug(`Connected Clients are: ${clients}`);
         });
 
         if (this.action === 'join') {
@@ -42,7 +42,7 @@ export default class Room {
             this.store = this.store.rooms[this.roomId];
             if (clients.length >= 1) {
                 if (this.store.password && !(await bcrypt.compare(this.password, this.store.password))) {
-                    logger.info(`[JOIN FAILED] Incorrect password for room ${this.roomId}`);
+                    consola.info(`[JOIN FAILED] Incorrect password for room ${this.roomId}`);
                     this.socker.emit('Error: Incorrect password!');
                     return false;
                 }
@@ -51,11 +51,11 @@ export default class Room {
                 this.store.clients.push({ id: this.socker.id, username, isReady: false });
                 this.socker.username = username;
                 this.socker.emit('[SUCCESS] Successfully initialised');
-                logger.info(`[JOIN] Client joined room ${this.roomId}`);
+                consola.info(`[JOIN] Client joined room ${this.roomId}`);
                 return true;
             }
 
-            logger.warn(`[JOIN FAILED] Client denied join, as roomId ${this.roomId} not created`);
+            consola.warn(`[JOIN FAILED] Client denied join, as roomId ${this.roomId} not created`);
             this.socker.emit('Error: Create a room first!');
             return false;
         }
@@ -76,12 +76,12 @@ export default class Room {
                 this.store.clients = [{ id: this.socker.id, username, isReady: false }];
 
                 this.socker.username = username;
-                logger.info(`[CREATE] Client created and joined room ${this.roomId}`);
+                consola.info(`[CREATE] Client created and joined room ${this.roomId}`);
                 this.socker.emit('[SUCCESS] Successfully initialised');
                 return true;
             }
 
-            logger.warn(`[CREATE FAILED] Client denied create, as roomId ${this.roomId} already present`);
+            consola.warn(`[CREATE FAILED] Client denied create, as roomId ${this.roomId} already present`);
             this.socker.emit('Error: Room already created. Join the room!');
             return false;
         }
@@ -137,7 +137,7 @@ export default class Room {
         this.store.clients = this.shufflePlayers(this.store.clients);
         this.showPlayers();
         this.io.to(this.roomId).emit('draft-start', 'The players order is shuffled and the draft has started...');
-        logger.info('Draft started...');
+        consola.info('Draft started...');
 
         // Reset draft object to initial state
         this._resetCurrentGame();
@@ -207,7 +207,7 @@ export default class Room {
             .emit('player-turn-end', `${this.store.clients[this.store.draft.turnNum].username} chance ended`);
         this.io.to(this.store.clients[this.store.draft.turnNum].id).emit('personal-turn-end', 'Your chance ended');
 
-        logger.info(`[TURN CHANGE] ${this.store.clients[this.store.draft.turnNum].username} had timeout turn change`);
+        consola.info(`[TURN CHANGE] ${this.store.clients[this.store.draft.turnNum].username} had timeout turn change`);
 
         const currentTurnNum = (this.store.draft.turnNum + 1) % this.store.clients.length;
         this.store.draft.turnNum = currentTurnNum;
@@ -218,7 +218,7 @@ export default class Room {
     _emitTurn(currentTurnNum) {
         this.io.to(this.store.clients[currentTurnNum].id).emit('personal-turn-start', 'It is your chance to pick');
         this.io.to(this.roomId).emit('player-turn-start', `${this.store.clients[currentTurnNum].username} is picking`);
-        logger.info(
+        consola.info(
             `[TURN CHANGE] ${this.store.clients[currentTurnNum].username} is the new drafter. Turn number: ${currentTurnNum}`
         );
         this._triggerTimeout();
@@ -232,7 +232,7 @@ export default class Room {
 
     _resetTimeOut() {
         if (typeof this.store.draft?.timeOut === 'object') {
-            logger.info('[TURN CHANGE] Timeout reset');
+            consola.info('[TURN CHANGE] Timeout reset');
             clearTimeout(this.store.draft.timeOut);
         }
     }
@@ -250,7 +250,7 @@ export default class Room {
             };
         }
 
-        logger.info(`[USER-CONFIG] ${JSON.stringify(this.options)}`);
+        consola.info(`[USER-CONFIG] ${JSON.stringify(this.options)}`);
     }
 
     /**
@@ -270,10 +270,10 @@ export default class Room {
                 this.endDraft();
                 this._resetCurrentGame();
             } catch (_) {
-                logger.info('[FORCE DISCONNECT] Server closed forcefully');
+                consola.info('[FORCE DISCONNECT] Server closed forcefully');
             }
 
-            logger.info('Client Disconnected!');
+            consola.info('Client Disconnected!');
         });
     }
 }
