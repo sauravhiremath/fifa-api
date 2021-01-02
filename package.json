@@ -48,7 +48,7 @@
     "dateformat": "4.4.1",
     "dotenv": "8.2.0",
     "eslint-config-prettier": "7.1.0",
-    "eslint-config-xo": "0.33.1",
+    "eslint-config-xo": "0.34.0",
     "eslint-plugin-prettier": "3.3.0",
     "nodemon": "2.0.6",
     "prettier": "2.2.1"
