@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import { API_KEY, SALT_ROUNDS } from '../env';
+import { API_KEY, getExternalIp, SALT_ROUNDS } from '../env';
 import Users, { checkExisting } from './../models/usersModel';
 import { ErrorHandler, verifyToken } from '../middlewares';
 
@@ -81,6 +81,12 @@ const authController = {
         }
 
         return res.json({ success: true, decoded });
+    },
+
+    getExternalIp: async (req, res) => {
+        const ip = await getExternalIp();
+
+        return res.json({ success: true, ip });
     }
 };
 

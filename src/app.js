@@ -7,7 +7,7 @@ import consola from 'consola';
 
 import { socker } from './socker';
 import { handleError, authenticated } from './middlewares';
-import { API_PORT, hosts } from './env';
+import { API_PORT, SOCKET_PORT, hosts } from './env';
 
 const app = express();
 const server = new http.Server(app);
@@ -25,10 +25,10 @@ app.use((err, _req, res, _) => {
 });
 
 app.listen(API_PORT, () => {
-    consola.success(`Api listening on port ${Number(API_PORT)}!`);
+    consola.success(`Api listening on port ${API_PORT}!`);
 });
 
-server.listen(Number(API_PORT) + 1, () => {
-    consola.success(`Socker listening on port ${Number(API_PORT) + 1}!`);
+server.listen(SOCKET_PORT, () => {
+    consola.success(`Socker listening on port ${SOCKET_PORT}!`);
     consola.info(`Api and socker whitelisted for ${hosts}`);
 });

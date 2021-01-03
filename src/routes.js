@@ -7,6 +7,8 @@ const routes = route => {
         res.send(`Api server in running (${new Date()})`);
     });
 
+    route.route('/auth/getWebsocketIp').get(authController.getExternalIp);
+
     route.route('/auth/login').post(authController.login);
 
     route.route('/auth/verify').post(authController.verify);
