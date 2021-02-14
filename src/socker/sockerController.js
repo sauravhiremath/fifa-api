@@ -9,7 +9,7 @@ import { hosts } from '../env';
 export default app => {
     const io = new Server(app, {
         path: '/classic-mode',
-        origins: fixedOrigin(hosts)
+        cors: fixedOrigin(hosts)
     });
 
     consola.info('Socketio initialised!');

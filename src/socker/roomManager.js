@@ -1,17 +1,25 @@
 import bcrypt from 'bcrypt';
-
 import consola from 'consola';
+
+// eslint-disable-next-line no-unused-vars
+import { Server, Socket } from 'socket.io';
+// eslint-disable-next-line no-unused-vars
+import { Adapter } from 'socket.io-adapter';
+
 import { SALT_ROUNDS, MAX_PLAYERS_DEFAULT, MAX_TIMER_DEFAULT } from '../env';
 
 export default class Room {
     constructor(options) {
+        /** @type { Server } */
         this.io = options.io; // Shortname for -> io.of('/your_namespace_here')
+        /** @type { Socket } */
         this.socker = options.socket;
         this.username = options.username;
         this.roomId = options.roomId;
         this.password = options.password; // Optional
         this.action = options.action; // [join, create]
         this.options = JSON.parse(options.options); // {maxTimerLimit, maxPlayerLimit}
+        /** @type { Adapter } */
         this.store = options.io.adapter; // Later expanded to io.adapter.rooms[roomId]
     }
 
@@ -27,11 +35,12 @@ export default class Room {
      */
     async init(username) {
         // Stores an array containing socket ids in 'roomId'
-        let clients;
-        await this.io.in(this.roomId).clients((e, _clients) => {
-            clients = _clients || consola.error('[INTERNAL ERROR] Room creation failed!');
-            consola.debug(`Connected Clients are: ${clients}`);
-        });
+        const clients = await this.io.in(this.roomId).allSockets();
+        if (!clients) {
+            consola.error('[INTERNAL ERROR] Room creation failed!');
+        }
+
+        consola.debug(`Connected Clients are: ${clients}`);
 
         if (this.action === 'join') {
             // @optional Check if correct password for room
@@ -39,8 +48,8 @@ export default class Room {
             //     If yes, join the socket to the room
             //     If not, emit 'invalid operation: room does not exist'
 
-            this.store = this.store.rooms[this.roomId];
-            if (clients.length >= 1) {
+            this.store = this.store.rooms.get(this.roomId);
+            if (clients.size >= 1) {
                 if (this.store.password && !(await bcrypt.compare(this.password, this.store.password))) {
                     consola.info(`[JOIN FAILED] Incorrect password for room ${this.roomId}`);
                     this.socker.emit('Error: Incorrect password!');
@@ -65,9 +74,9 @@ export default class Room {
             //     If yes, create new room and join socket to the room
             //     If not, emit 'invalid operation: room already exists'
 
-            if (clients.length < 1) {
+            if (clients.size < 1) {
                 await this.socker.join(this.roomId);
-                this.store = this.store.rooms[this.roomId];
+                this.store = this.store.rooms.get(this.roomId);
 
                 if (this.password) {
                     this.store.password = await bcrypt.hash(this.password, SALT_ROUNDS);
