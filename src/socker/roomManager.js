@@ -18,9 +18,15 @@ export default class Room {
         this.roomId = options.roomId;
         this.password = options.password; // Optional
         this.action = options.action; // [join, create]
-        this.options = JSON.parse(options.options); // {maxTimerLimit, maxPlayerLimit}
         /** @type { Adapter } */
         this.store = options.io.adapter; // Later expanded to io.adapter.rooms[roomId]
+        this.options = {
+            maxPlayersLimit: MAX_PLAYERS_DEFAULT,
+            maxTimerLimit: MAX_TIMER_DEFAULT
+        };
+        if (!options.options) {
+            this.options = JSON.parse(options.options);
+        }
     }
 
     /**
@@ -59,7 +65,11 @@ export default class Room {
                 await this.socker.join(this.roomId);
                 this.store.clients.push({ id: this.socker.id, username, isReady: false });
                 this.socker.username = username;
-                this.socker.emit('[SUCCESS] Successfully initialised');
+                this.socker.emit('[SUCCESS] Successfully initialised', {
+                    roomId: this.roomId,
+                    password: this.password,
+                    options: this.options
+                });
                 consola.info(`[JOIN] Client joined room ${this.roomId}`);
                 return true;
             }
@@ -86,7 +96,11 @@ export default class Room {
 
                 this.socker.username = username;
                 consola.info(`[CREATE] Client created and joined room ${this.roomId}`);
-                this.socker.emit('[SUCCESS] Successfully initialised');
+                this.socker.emit('[SUCCESS] Successfully initialised', {
+                    roomId: this.roomId,
+                    password: this.password,
+                    options: this.options
+                });
                 return true;
             }
 
@@ -254,12 +268,16 @@ export default class Room {
                 sTime: new Date(),
                 timeOut: 0,
                 turnNum: 0,
-                maxPlayersLimit: this.options?.maxPlayersLimit || MAX_PLAYERS_DEFAULT,
-                maxTimerLimit: this.options?.maxTimerLimit || MAX_TIMER_DEFAULT
+                maxPlayersLimit: this.options.maxPlayersLimit,
+                maxTimerLimit: this.options.maxTimerLimit
             };
         }
 
-        consola.info(`[USER-CONFIG] ${JSON.stringify(this.options)}`);
+        if (this.options) {
+            consola.info(`[USER-CONFIG] ${JSON.stringify(this.options)}`);
+        } else {
+            consola.info(`[DEFAULT-CONFIG] ${JSON.stringify(this.options)}`);
+        }
     }
 
     /**
