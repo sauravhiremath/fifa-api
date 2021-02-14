@@ -3,8 +3,9 @@ import axios from 'axios';
 import consola from 'consola';
 dotenv.config();
 
-export const { ALGOLIA_ID, ALGOLIA_SEARCH_API_KEY, ALGOLIA_INDEX_NAME, DB_URL, API_KEY, SALT_ROUNDS } = process.env;
+export const { ALGOLIA_ID, ALGOLIA_SEARCH_API_KEY, ALGOLIA_INDEX_NAME, DB_URL, API_KEY } = process.env;
 
+export const SALT_ROUNDS = 6;
 export const API_PORT = 8080;
 export const SOCKET_PORT = 65080;
 export const DB_URL_DEV = 'mongodb://localhost:27017/fifa.db';
@@ -15,7 +16,7 @@ export let hosts = [];
 if (process.env.NODE_ENV === 'production') {
     hosts = ['https://fifa.sauravmh.com', 'https://sauravmh.vercel.app'];
 } else {
-    hosts = ['http://localhost:8080'];
+    hosts = ['http://localhost:3000'];
 }
 
 export const ROOM_ID_RX = /^([A-Z0-9]){6}$/;
@@ -44,7 +45,7 @@ export const getExternalIp = async () => {
 
         return res.data.body;
     } catch (error) {
-        consola.warn(error, 'Error while talking to metadata server, assuming localhost');
+        consola.error(error, 'Error while talking to metadata server, assuming localhost');
         return 'localhost';
     }
 };
