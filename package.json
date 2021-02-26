@@ -43,7 +43,7 @@
     "@babel/runtime": "7.12.18",
     "algoliasearch": "4.8.5",
     "babel-eslint": "10.1.0",
-    "bcrypt": "5.0.0",
+    "bcrypt": "5.0.1",
     "consola": "2.15.3",
     "dateformat": "4.5.1",
     "dotenv": "8.2.0",
