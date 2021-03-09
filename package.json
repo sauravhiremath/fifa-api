@@ -36,11 +36,11 @@
     "socket.io": "^3.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "7.12.17",
-    "@babel/core": "7.12.17",
-    "@babel/node": "7.12.17",
-    "@babel/preset-env": "7.12.17",
-    "@babel/runtime": "7.12.18",
+    "@babel/cli": "7.13.10",
+    "@babel/core": "7.13.10",
+    "@babel/node": "7.13.10",
+    "@babel/preset-env": "7.13.10",
+    "@babel/runtime": "7.13.10",
     "algoliasearch": "4.8.5",
     "babel-eslint": "10.1.0",
     "bcrypt": "5.0.0",
