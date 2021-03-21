@@ -1,32 +1,25 @@
 {
   "name": "fifa-api",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Fifa custom Team builder API based on express js with es6 and integrated with mongodb",
-  "main": "dist/app.js",
+  "main": "build/app.js",
+  "engines": {
+    "node": ">=10.x"
+  },
   "scripts": {
-    "build": "babel ./src --out-dir ./build",
-    "start": "nodemon --exec babel-node src/app.js",
+    "build": "babel ./src --out-dir ./build -s",
+    "start": "node build/app.js",
+    "start:dev": "nodemon --exec babel-node src/app.js",
     "lint": "eslint ."
   },
   "xo": {
     "prettier": true
   },
-  "renovate": {
-    "packageRules": [
-      {
-        "packagePatterns": [
-          "eslint",
-          "^@types/"
-        ],
-        "groupName": "eslint",
-        "automerge": true
-      }
-    ]
-  },
   "author": "Saurav M. H",
   "url": "https://github.com/sauravhiremath/fifa-api",
   "license": "ISC",
   "dependencies": {
+    "@socket.io/sticky": "^1.0.0",
     "axios": "^0.21.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
@@ -34,12 +27,14 @@
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.9",
-    "socket.io": "^3.0.0"
+    "socket.io": "^3.0.0",
+    "socket.io-redis": "^6.0.1"
   },
   "devDependencies": {
     "@babel/cli": "7.12.10",
     "@babel/core": "7.12.10",
     "@babel/node": "7.12.10",
+    "@babel/plugin-transform-runtime": "^7.13.8",
     "@babel/preset-env": "7.12.11",
     "@babel/runtime": "7.12.5",
     "algoliasearch": "4.8.3",
