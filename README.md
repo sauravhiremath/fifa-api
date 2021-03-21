@@ -18,17 +18,25 @@ This was created mainly for offline gaming, to avoid writing player lists manual
 ## Project Architecture
 ![architecture](https://miro.medium.com/max/1400/1*QEqiWlUQaaJ1DsjEUhN4dA.png)
 
-## Getting Started
+### Local environment setup:
 
-### Development mode:
-Install and start the server
+1. Update the `.env` file using reference from `sample.env`
+2. Run `yarn install` to install packages
+3. Install docker-compose (https://docs.docker.com/compose/install/) in your system. Proceed further if already done
+4. Start MongoDB and Redis service using `docker-compose up`
+5. Running `yarn start:dev` will start the server with hot-reload
 
-```bash
-npm install
-npm run start
-```
+#### Links
 
-### Production mode:
+- HTTP API server: http://localhost:8080
+- Socket.io server: http://localhost:65080
+
+### Production setup (maintainers only):
+
+- To be updated for docker-container and k8s support
+
+#### Old version
+
 Build and use pm2 to start your process
 
 ```bash
