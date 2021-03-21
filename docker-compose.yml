@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+    redis:
+        image: redis:alpine
+        container_name: redis
+        volumes:
+            - redis-vol:/var/lib/redis
+        ports:
+            - '${REDIS_PORT}:${REDIS_PORT}'
+        networks:
+            - fifa-network
+
+    mongodb:
+        image: mongo
+        container_name: mongodb
+        environment:
+            - PUID=1000
+            - PGID=1000
+        volumes:
+            - mongo-vol:/data/db
+        restart: on-failure
+        ports:
+            - 27017:27017
+        networks:
+            - fifa-network
+
+networks:
+    fifa-network:
+        driver: bridge
+volumes:
+    redis-vol: {}
+    mongo-vol:
+        driver: local
