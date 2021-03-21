@@ -1,16 +1,25 @@
 import { Server } from 'socket.io';
+import redisAdapter from 'socket.io-redis';
 import consola from 'consola';
 
 import { verifyToken } from '../middlewares';
 import Room from './roomManager';
 import { fixedOrigin } from './corsFixer';
-import { hosts } from '../env';
+import { hosts, REDIS_PORT, REDIS_HOST } from '../env';
 
 export default app => {
     const io = new Server(app, {
+        transports: ['websocket'], // To avoid sticky sessions when using multiple servers
         path: '/classic-mode',
-        cors: fixedOrigin(hosts)
+        cors: fixedOrigin(hosts),
+        rememberUpgrade: true
     });
+
+    try {
+        io.adapter(redisAdapter({ host: REDIS_HOST, port: Number(REDIS_PORT) }));
+    } catch (err) {
+        consola.warn(err);
+    }
 
     consola.info('Socketio initialised!');
 
