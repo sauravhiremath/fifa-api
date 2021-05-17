@@ -2,18 +2,30 @@
   "name": "fifa-api",
   "version": "1.1.0",
   "description": "Fifa custom Team builder API based on express js with es6 and integrated with mongodb",
-  "main": "build/app.js",
+  "type": "module",
+  "exports": "./build/app.js",
   "engines": {
-    "node": ">=10.x"
+    "node": ">=12.19.0"
   },
   "scripts": {
     "build": "babel ./src --out-dir ./build -s",
     "start": "node build/app.js",
-    "start:dev": "nodemon --exec babel-node src/app.js",
-    "lint": "eslint ."
+    "dev": "nodemon --exec babel-node src/app.js",
+    "lint": "xo"
   },
   "xo": {
-    "prettier": true
+    "prettier": true,
+    "plugins": [
+      "unicorn"
+    ],
+    "rules": {
+      "unicorn/filename-case": [
+        "error",
+        {
+          "case": "camelCase"
+        }
+      ]
+    }
   },
   "author": "Saurav M. H",
   "url": "https://github.com/sauravhiremath/fifa-api",
@@ -23,7 +35,6 @@
     "axios": "^0.21.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
-    "eslint": "^7.14.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.9",
@@ -43,10 +54,10 @@
     "consola": "2.15.3",
     "dateformat": "4.5.1",
     "dotenv": "8.2.0",
-    "eslint-config-prettier": "8.0.0",
-    "eslint-config-xo": "0.35.0",
-    "eslint-plugin-prettier": "3.3.1",
+    "eslint-config-xo-space": "^0.27.0",
+    "eslint-plugin-prettier": "^3.4.0",
     "nodemon": "2.0.7",
-    "prettier": "2.2.1"
+    "prettier": "2.2.1",
+    "xo": "^0.40.1"
   }
 }

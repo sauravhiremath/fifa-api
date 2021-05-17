@@ -56,7 +56,12 @@ typings/
 
 # dotenv environment variables file
 .env
+.env.production
 
 .DS_Store
 
+# Build directory
 /build
+
+# GCP Keys
+google-compute-engine-account.json
