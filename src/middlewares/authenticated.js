@@ -1,24 +1,24 @@
 import jwt from 'jsonwebtoken';
-import { API_KEY } from '../env';
+import { config } from '../config.js';
 
-const authenticated = (req, res, next) => {
-    const token = req.headers.authorization;
-    jwt.verify(token, API_KEY, (err, _) => {
-        if (err) {
-            res.json('Token not provided');
-        } else {
-            next();
-        }
-    });
+const authenticated = (request, response, next) => {
+  const token = request.headers.authorization;
+  jwt.verify(token, config.JWT_SECRET, (error, _) => {
+    if (error) {
+      response.json('Token not provided');
+    } else {
+      next();
+    }
+  });
 };
 
 export const verifyToken = token => {
-    try {
-        const decoded = jwt.verify(token, API_KEY);
-        return decoded;
-    } catch {
-        return false;
-    }
+  try {
+    const decoded = jwt.verify(token, config.JWT_SECRET);
+    return decoded;
+  } catch {
+    return false;
+  }
 };
 
 export default authenticated;
