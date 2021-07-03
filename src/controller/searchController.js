@@ -12,8 +12,15 @@ const searchController = {
     try {
       const results = await client.search(requests);
       response.status(200).send(results);
-    } catch {
-      consola.error('Algolia Error. Kindly check Algolia API keys!');
+    } catch (error) {
+      consola.error({
+        custom: {
+          message: 'Algolia Error. Kindly check Algolia API keys!',
+          ALGOLIA_ID: config.ALGOLIA_ID,
+          ALGOLIA_SEARCH_API_KEY: config.ALGOLIA_SEARCH_API_KEY,
+        },
+        error,
+      });
     }
   },
 };
