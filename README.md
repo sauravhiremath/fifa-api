@@ -21,6 +21,10 @@ This was created mainly for offline gaming, to avoid writing player lists manual
 
 ![architecture](https://miro.medium.com/max/1400/1*QEqiWlUQaaJ1DsjEUhN4dA.png)
 
+## GCP Architecture
+
+![image](https://user-images.githubusercontent.com/28642011/124379112-b140f800-dcd2-11eb-9e2b-c67a8ed42d64.png)
+
 ### Local environment setup:
 
 1. Update the `.env` file using reference from `sample.env`
