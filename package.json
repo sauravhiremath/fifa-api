@@ -8,6 +8,7 @@
     "node": ">=12.19.0"
   },
   "scripts": {
+    "test": "jest",
     "build": "babel ./src --out-dir ./build -s",
     "start": "node build/app.js",
     "dev": "nodemon --exec babel-node src/app.js",
@@ -56,8 +57,10 @@
     "dotenv": "8.2.0",
     "eslint-config-xo-space": "^0.27.0",
     "eslint-plugin-prettier": "^3.4.0",
+    "jest": "^27.0.6",
     "nodemon": "2.0.7",
     "prettier": "2.2.1",
+    "socket.io-client": "^4.1.2",
     "xo": "^0.40.1"
   }
 }
