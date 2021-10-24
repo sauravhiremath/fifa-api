@@ -36,7 +36,16 @@ This was created mainly for offline gaming, to avoid writing player lists manual
 
 ### Production setup (maintainers only):
 
--   To be updated for docker-container and k8s support
+Reference - https://github.com/Deeptiman/go-cache-kubernetes
+
+-   Create k8s cluster (By default, 3 standard nodes are created for our cluster)
+    `gcloud container clusters create fifa-api-server --zone asia-south1-a`
+-   Get the credentials so we can manage it locally through kubectl
+    `gcloud container clusters get-credentials fifa-api-server --zone asia-south1-a`
+-   Apply redis deployment
+    `kubectl apply k8s/redis/redis-deployment.yaml`
+-   Apply mongodb deployment
+    `kubectl apply k8s/mongodb/mongodb-deployment.yaml`
 
 #### Setup terraforn
 
@@ -45,7 +54,7 @@ This was created mainly for offline gaming, to avoid writing player lists manual
         ssh-keygen -f ~/.ssh/gcloud_id_rsa
         ```
 
-#### Old version
+#### Old deployment instructions
 
 Build and use pm2 to start your process
 
