@@ -6,7 +6,7 @@ services:
     volumes:
       - redis-vol:/var/lib/redis
     ports:
-      - '${REDIS_PORT}:${REDIS_PORT}'
+      - 6379:6379
     networks:
       - fifa-network
 
