@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fifa-api
+spec:
+  selector:
+    matchLabels:
+      app: fifa-api
+  template:
+    metadata:
+      labels:
+        app: fifa-api
+    spec:
+      containers:
+        - name: fifa-api
+          image: sauravmh/fifa-api:latest
+          imagePullPolicy: Never
+          resources:
+            requests:
+              memory: '64Mi'
+              cpu: '250m'
+            limits:
+              memory: '500Mi'
+              cpu: '4G'
+          ports:
+            - containerPort: 8080
