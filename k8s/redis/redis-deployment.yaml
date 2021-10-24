@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redismod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redismod
+  template:
+    metadata:
+      labels:
+        app: redismod
+    spec:
+      containers:
+        - name: redismod
+          image: redislabs/redismod
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              memory: '1G'
+              cpu: '4G'
+          ports:
+            - containerPort: 6379
+          securityContext:
+            capabilities:
+              add:
+                - SYS_RESOURCE

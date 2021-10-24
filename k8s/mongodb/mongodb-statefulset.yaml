@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongod
+spec:
+  serviceName: mongodb-service
+  replicas: 3
+  selector:
+    matchLabels:
+      role: mongo
+  template:
+    metadata:
+      labels:
+        role: mongo
+        environment: test
+        replicaset: MainRepSet
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: mongod-container
+          image: mongo
+          env:
+            - name: PUID
+              value: '1000'
+            - name: PGID
+              value: '1000'
+            - name: MONGO_INITDB_DATABASE
+              value: 'fifa-db'
+          command:
+            - 'mongod'
+            - '--bind_ip'
+            - '0.0.0.0'
+            - '--replSet'
+            - 'MainRepSet'
+          resources:
+            requests:
+              cpu: '0.2'
+              memory: 200Mi
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongodb-persistent-storage-claim
+              mountPath: /data/db
+  volumeClaimTemplates:
+    - metadata:
+        name: mongodb-persistent-storage-claim
+        annotations:
+          volume.beta.kubernetes.io/storage-class: 'standard'
+      spec:
+        accessModes: ['ReadWriteOnce']
+        resources:
+          requests:
+            storage: 1Gi
