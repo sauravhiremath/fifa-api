@@ -36,7 +36,7 @@ This was created mainly for offline gaming, to avoid writing player lists manual
 
 ### Production setup (maintainers only):
 
-Reference - https://github.com/Deeptiman/go-cache-kubernetes
+Reference - https://github.com/Deeptiman/go-cache-kubernetes (https://deeptiman.medium.com/a-data-caching-service-in-kubernetes-1e9dbcdb8f91)
 
 -   Create k8s cluster (By default, 3 standard nodes are created for our cluster)
     `gcloud container clusters create fifa-api-server --zone asia-south1-a`
