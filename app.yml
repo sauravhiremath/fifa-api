@@ -1,0 +1,26 @@
+# [START appengine_yaml]
+service: fifa-multiplayer-server
+# Default runtime with node v12.19 not compatible
+runtime: custom
+env: flex
+
+# Use only a single instance, so that this local-memory-only app will work
+# consistently with multiple users. To work across multiple instances, an
+# extra-instance messaging system or data store would be needed.
+manual_scaling:
+  instances: 1
+resources:
+  cpu: 1
+  memory_gb: 0.5
+  disk_size_gb: 10
+includes:
+  - env_variables.yml
+
+# [START network]
+network:
+  instance_tag: websocket
+  forwarded_ports:
+    - 65080
+  session_affinity: true
+# [END network]
+# [END appengine_yaml]
