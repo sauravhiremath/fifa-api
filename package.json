@@ -2,17 +2,17 @@
   "name": "fifa-api",
   "version": "1.1.0",
   "description": "Fifa custom Team builder API based on express js with es6 and integrated with mongodb",
-  "type": "module",
-  "exports": "./build/app.js",
+  "main": "./build/app.js",
   "engines": {
-    "node": ">=12.19.0"
+    "node": "16.x"
   },
   "scripts": {
     "test": "jest",
     "build": "babel ./src --out-dir ./build -s",
-    "start": "node build/app.js",
+    "start": "node ./build/app.js",
     "dev": "nodemon --exec babel-node src/app.js",
-    "lint": "xo"
+    "lint": "xo",
+    "gcp-build": "yarn build"
   },
   "xo": {
     "prettier": true,
@@ -48,7 +48,7 @@
     "@babel/node": "7.12.17",
     "@babel/plugin-transform-runtime": "^7.13.8",
     "@babel/preset-env": "7.12.17",
-    "@babel/runtime": "7.12.18",
+    "@babel/runtime": "7.15.4",
     "algoliasearch": "4.8.5",
     "babel-eslint": "10.1.0",
     "bcrypt": "5.0.0",
