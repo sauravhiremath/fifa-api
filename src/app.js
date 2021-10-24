@@ -24,8 +24,8 @@ app.use((error, _request, response, _) => {
   handleError(error, response);
 });
 
-app.listen(config.API_PORT, () => {
-  consola.success(`Api listening on port ${config.API_PORT}!`);
+app.listen(config.PORT, () => {
+  consola.success(`Api listening on port ${config.PORT}!`);
 });
 
 server.listen(config.SOCKET_PORT, () => {
